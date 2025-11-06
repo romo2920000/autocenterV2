@@ -121,6 +121,11 @@ export interface OrderInvoice {
   nuevos?: number;
   isSupplierValid?: boolean;
   isGenericSupplier?: boolean;
+  acceptGenericSupplier?: boolean;
+  pendingSupplierValidation?: boolean;
+  generic_supplier_approved?: boolean;
+  generic_supplier_approved_by?: string;
+  generic_supplier_approved_at?: Date;
 }
 
 export interface ProductosPorProveedor {
@@ -204,4 +209,5 @@ export interface Order {
   delivery_status?: 'pending' | 'delivered';
   delivered_at?: string;
   delivered_by?: string;
+  has_pending_supplier_validation?: boolean;
 }

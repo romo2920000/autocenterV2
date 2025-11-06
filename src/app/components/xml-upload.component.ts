@@ -79,6 +79,19 @@ import { SupabaseService } from '../services/supabase.service';
                       <div class="flex-1">
                         <p class="font-bold text-yellow-800 text-sm">PROVEEDOR NO REGISTRADO</p>
                         <p class="text-yellow-700 text-xs mt-1">Esta factura se cargará como <strong>PROVEEDOR GENÉRICO</strong> ya que no existe en el catálogo.</p>
+
+                        <!-- Checkbox para aceptar proveedor genérico -->
+                        <div class="mt-3 flex items-start gap-2">
+                          <input
+                            type="checkbox"
+                            [id]="'accept-generic-' + i"
+                            [(ngModel)]="invoice.acceptGenericSupplier"
+                            class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label [for]="'accept-generic-' + i" class="text-xs text-gray-700 cursor-pointer">
+                            Acepto procesar esta factura como <strong>PROVEEDOR GENÉRICO</strong> y entiendo que requerirá validación por Super Administrador o Administrador Corporativo antes de continuar.
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -345,16 +358,16 @@ export class XmlUploadComponent {
     const invalidSuppliers = this.processedInvoices.filter(inv => inv.isSupplierValid === false);
 
     if (invalidSuppliers.length > 0) {
-      const confirmMsg = `Hay ${invalidSuppliers.length} factura(s) con proveedores no registrados que se cargarán como "PROVEEDOR GENÉRICO".\n\n` +
-        `Facturas afectadas:\n${invalidSuppliers.map(inv => `- ${inv.invoice_folio} (${inv.proveedor})`).join('\n')}\n\n` +
-        `¿Deseas continuar?`;
+      const notAccepted = invalidSuppliers.filter(inv => !inv.acceptGenericSupplier);
 
-      if (!confirm(confirmMsg)) {
+      if (notAccepted.length > 0) {
+        alert(`Por favor, acepta el checkbox de las siguientes facturas para procesarlas como PROVEEDOR GENÉRICO:\n\n${notAccepted.map(inv => `- ${inv.invoice_folio} (${inv.proveedor})`).join('\n')}\n\nSi no deseas procesarlas, elimínalas de la lista.`);
         return;
       }
 
       invalidSuppliers.forEach(inv => {
         inv.isGenericSupplier = true;
+        inv.pendingSupplierValidation = true;
         inv.proveedor = 'PROVEEDOR GENÉRICO';
       });
     }

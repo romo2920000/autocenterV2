@@ -10,6 +10,8 @@ export class XmlProductsService {
 
   async saveInvoices(orderId: string, invoices: OrderInvoice[]): Promise<void> {
     try {
+      const hasPendingSupplier = invoices.some(inv => inv.pendingSupplierValidation);
+
       for (const invoice of invoices) {
         const { data: invoiceData, error: invoiceError } = await this.supabase.client
           .from('order_invoices')
@@ -21,7 +23,10 @@ export class XmlProductsService {
             proveedor_nombre: invoice.proveedor,
             rfc_proveedor: invoice.rfc_proveedor,
             validados: invoice.validados || 0,
-            nuevos: invoice.nuevos || 0
+            nuevos: invoice.nuevos || 0,
+            is_generic_supplier: invoice.isGenericSupplier || false,
+            pending_supplier_validation: invoice.pendingSupplierValidation || false,
+            generic_supplier_approved: false
           })
           .select()
           .maybeSingle();
@@ -68,6 +73,13 @@ export class XmlProductsService {
             throw new Error(`Error al guardar productos: ${productsError.message}`);
           }
         }
+      }
+
+      if (hasPendingSupplier) {
+        await this.supabase.client
+          .from('orders')
+          .update({ has_pending_supplier_validation: true })
+          .eq('id', orderId);
       }
     } catch (error: any) {
       console.error('Error en saveInvoices:', error);

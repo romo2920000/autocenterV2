@@ -145,6 +145,19 @@
             {{ notFoundProductsCount }}
           </span>
         </button>
+        <button
+          *ngIf="auth.isAdminCorporativo() || auth.isSuperAdmin()"
+          (click)="setActiveView('supplier-validation')"
+          [class]="activeView === 'supplier-validation' ? 'border-yellow-500 text-yellow-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+          Validación Proveedores
+          <span *ngIf="pendingSupplierValidationCount > 0" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold text-white bg-yellow-600 rounded-full">
+            {{ pendingSupplierValidationCount }}
+          </span>
+        </button>
       </nav>
     </div>
   </div>
@@ -2955,11 +2968,27 @@
             Solo Asesores Técnicos, Gerentes y Administradores pueden cargar archivos XML
           </p>
         </div>
+        <div *ngIf="selectedOrder?.has_pending_supplier_validation" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800 mb-4">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <p class="text-sm text-yellow-700 font-medium">
+              ⏳ Pendiente de Validación de Proveedor Genérico
+            </p>
+          </div>
+          <p class="text-xs text-yellow-600 mt-1 ml-7">
+            Este presupuesto tiene facturas con proveedores genéricos que requieren aprobación de Super Administrador o Administrador Corporativo antes de continuar
+          </p>
+        </div>
         <button
           *ngIf="selectedOrder?.status === 'Pendiente de Validación de Productos' && auth.canAdvanceOrderStatus()"
           (click)="selectedOrder && validateProducts(selectedOrder)"
-          [disabled]="selectedOrder?.isValidatingProducts"
+          [disabled]="selectedOrder?.isValidatingProducts || selectedOrder?.has_pending_supplier_validation"
+          [class.opacity-50]="selectedOrder?.has_pending_supplier_validation"
+          [class.cursor-not-allowed]="selectedOrder?.has_pending_supplier_validation"
           class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+          [title]="selectedOrder?.has_pending_supplier_validation ? 'Debe aprobar los proveedores genéricos antes de validar productos' : ''"
         >
           {{ selectedOrder?.isValidatingProducts ? 'Validando...' : 'Validar Productos' }}
         </button>
@@ -3189,4 +3218,9 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Supplier Validation View -->
+  <div *ngIf="activeView === 'supplier-validation' && (auth.isAdminCorporativo() || auth.isSuperAdmin())">
+    <app-supplier-validation></app-supplier-validation>
   </div>

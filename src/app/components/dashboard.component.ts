@@ -28,24 +28,26 @@ import { DIAGNOSTIC_CATEGORIES } from '../models/diagnostic.model';
 import { AuthService, User } from '../services/auth.service';
 import { OrderPermissionsService } from '../services/order-permissions.service';
 import { PreOcValidationComponent } from './pre-oc-validation.component';
+import { SupplierValidationComponent } from './supplier-validation.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, VehicleDiagnosticComponent, DiagnosticDisplayComponent, CustomerSearchComponent, AuthorizationRequestComponent, InvoiceUploadComponent, XmlUploadComponent, ProductClassificationComponent, LostSalesReportComponent, BudgetPreviewComponent, PreOcValidationComponent],
+  imports: [CommonModule, FormsModule, VehicleDiagnosticComponent, DiagnosticDisplayComponent, CustomerSearchComponent, AuthorizationRequestComponent, InvoiceUploadComponent, XmlUploadComponent, ProductClassificationComponent, LostSalesReportComponent, BudgetPreviewComponent, PreOcValidationComponent, SupplierValidationComponent],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
   user: User | null = null;
   parseInt = parseInt;
 
-  activeView: 'dashboard' | 'new-order' | 'customer-search' | 'authorization' | 'invoice-upload' | 'lost-sales-report' | 'admin-validation' | 'pre-oc-validation' | 'not-found-products' = 'dashboard';
+  activeView: 'dashboard' | 'new-order' | 'customer-search' | 'authorization' | 'invoice-upload' | 'lost-sales-report' | 'admin-validation' | 'pre-oc-validation' | 'not-found-products' | 'supplier-validation' = 'dashboard';
   pendingValidationOrders: Order[] = [];
   pendingValidationCount: number = 0;
   pendingPreOCOrders: Order[] = [];
   pendingPreOCCount: number = 0;
   notFoundProducts: XmlProduct[] = [];
   notFoundProductsCount: number = 0;
+  pendingSupplierValidationCount: number = 0;
   showOrderDetail = false;
   showServicesSection = false;
   showAuthorizationModal = false;
@@ -212,11 +214,13 @@ export class DashboardComponent implements OnInit {
       await this.loadPendingValidationOrders();
       await this.loadPendingPreOCOrders();
       await this.loadNotFoundProducts();
+      await this.loadPendingSupplierValidations();
       await this.loadAdminStats();
     } else if (this.auth.isAdminCorporativo() || this.auth.isGerente()) {
       await this.loadPendingValidationOrders();
       await this.loadPendingPreOCOrders();
       await this.loadNotFoundProducts();
+      await this.loadPendingSupplierValidations();
     }
   }
 
@@ -277,7 +281,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  setActiveView(view: 'dashboard' | 'new-order' | 'customer-search' | 'admin-validation' | 'pre-oc-validation' | 'not-found-products') {
+  setActiveView(view: 'dashboard' | 'new-order' | 'customer-search' | 'admin-validation' | 'pre-oc-validation' | 'not-found-products' | 'supplier-validation') {
     this.activeView = view;
   }
 
@@ -2736,6 +2740,22 @@ export class DashboardComponent implements OnInit {
 
   getNotFoundProductsTotal(): number {
     return this.notFoundProducts.reduce((sum, p) => sum + (p.total || 0), 0);
+  }
+
+  async loadPendingSupplierValidations() {
+    try {
+      const { count, error } = await this.supabaseService.client
+        .from('order_invoices')
+        .select('*', { count: 'exact', head: true })
+        .eq('pending_supplier_validation', true)
+        .eq('generic_supplier_approved', false);
+
+      if (error) throw error;
+      this.pendingSupplierValidationCount = count || 0;
+    } catch (error: any) {
+      console.error('Error cargando validaciones de proveedores pendientes:', error);
+      this.pendingSupplierValidationCount = 0;
+    }
   }
 
   getDiagnosticBadgeClass(severity: any): string {
