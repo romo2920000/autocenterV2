@@ -1,0 +1,43 @@
+
+> build
+> ng build --configuration production
+
+❯ Building...
+✔ Building...
+Application bundle generation failed. [30.649 seconds]
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/advanced-audit.component.ts:354:64:
+      354 │ ... {{ log.resource_type }} - {{ log.resource_id?.substring(0, 8) }}
+          ╵                                                   ~~~~~~~~~
+
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/authorization-request.component.ts:72:43:
+      72 │                   $ {{ item.estimatedCost?.toFixed(2) || '0.00' }}
+         ╵                                            ~~~~~~~
+
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/pre-oc-validation.component.ts:55:37:
+      55 │               \${{ order.presupuesto?.toFixed(2) || '0.00' }}
+         ╵                                      ~~~~~~~
+
+
+▲ [WARNING] NG8107: The left side of this optional chain operation does not include 'null' or 'undefined' in its type, therefore the '?.' operator can be replaced with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/pre-oc-validation.component.ts:114:68:
+      114 │ ...ext-right p-2">\${{ producto.precio?.toFixed(2) || '0.00' }}</td>
+          ╵                                        ~~~~~~~
+
+
+✘ [ERROR] NG9: Property 'Object' does not exist on type 'AdvancedAuditComponent'. [plugin angular-compiler]
+
+    src/app/components/advanced-audit.component.ts:167:48:
+      167 │ ...iv *ngIf="alert.metadata && Object.keys(alert.metadata).length...
+          ╵                                ~~~~~~
+
+

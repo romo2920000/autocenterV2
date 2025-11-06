@@ -1,0 +1,642 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">Panel de Administración</h1>
+        <p class="text-gray-600">Gestión completa del Autocenter</p>
+      </div>
+      <button
+        (click)="goToDashboard()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Volver al Dashboard
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Usuarios Activos</p>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.activeUsers }}</p>
+            <p class="text-xs text-gray-500 mt-1">de {{ stats.totalUsers }} totales</p>
+          </div>
+          <div class="bg-blue-100 p-3 rounded-full">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Proveedores</p>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.totalProviders }}</p>
+            <p class="text-xs text-gray-500 mt-1">registrados</p>
+          </div>
+          <div class="bg-green-100 p-3 rounded-full">
+            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Presupuestos Pendientes</p>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.pendingOrders }}</p>
+            <p class="text-xs text-gray-500 mt-1">en proceso</p>
+          </div>
+          <div class="bg-yellow-100 p-3 rounded-full">
+            <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Total Presupuestos</p>
+            <p class="text-3xl font-bold text-gray-900">{{ stats.totalOrders }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ stats.completedOrders }} completados</p>
+          </div>
+          <div class="bg-purple-100 p-3 rounded-full">
+            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <div class="border-b border-gray-200">
+        <nav class="flex">
+          <button
+            (click)="activeTab = 'users'"
+            [class.border-blue-600]="activeTab === 'users'"
+            [class.text-blue-600]="activeTab === 'users'"
+            [class.border-transparent]="activeTab !== 'users'"
+            [class.text-gray-500]="activeTab !== 'users'"
+            class="py-4 px-6 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300 transition-colors flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            Usuarios
+          </button>
+          <button
+            (click)="activeTab = 'providers'"
+            [class.border-blue-600]="activeTab === 'providers'"
+            [class.text-blue-600]="activeTab === 'providers'"
+            [class.border-transparent]="activeTab !== 'providers'"
+            [class.text-gray-500]="activeTab !== 'providers'"
+            class="py-4 px-6 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300 transition-colors flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            Proveedores
+          </button>
+          <button
+            (click)="activeTab = 'orders'"
+            [class.border-blue-600]="activeTab === 'orders'"
+            [class.text-blue-600]="activeTab === 'orders'"
+            [class.border-transparent]="activeTab !== 'orders'"
+            [class.text-gray-500]="activeTab !== 'orders'"
+            class="py-4 px-6 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300 transition-colors flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Presupuestos
+          </button>
+        </nav>
+      </div>
+
+      <div class="p-6">
+        <div *ngIf="activeTab === 'users'">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Gestión de Usuarios</h2>
+            <button
+              (click)="openCreateUserModal()"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Nuevo Usuario
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let user of users" [class.bg-gray-50]="!user.is_active">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-blue-600 font-semibold text-sm">{{ user.full_name.charAt(0).toUpperCase() }}</span>
+                      </div>
+                      <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">{{ user.full_name }}</div>
+                        <div class="text-sm text-gray-500">{{ user.created_at | date:'short' }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ user.email }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                      [ngClass]="{
+                        'bg-purple-100 text-purple-800': user.role === 'super_admin',
+                        'bg-indigo-100 text-indigo-800': user.role === 'admin_corporativo',
+                        'bg-blue-100 text-blue-800': user.role === 'gerente',
+                        'bg-green-100 text-green-800': user.role === 'tecnico',
+                        'bg-yellow-100 text-yellow-800': user.role === 'asesor_tecnico'
+                      }">
+                      {{ getRoleLabel(user.role) }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <button
+                      (click)="toggleUserActive(user)"
+                      class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold transition-colors"
+                      [class.bg-green-100]="user.is_active"
+                      [class.text-green-800]="user.is_active"
+                      [class.bg-red-100]="!user.is_active"
+                      [class.text-red-800]="!user.is_active">
+                      {{ user.is_active ? 'Activo' : 'Inactivo' }}
+                    </button>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                    <button
+                      (click)="openEditUserModal(user)"
+                      class="text-blue-600 hover:text-blue-900 mr-3"
+                      title="Editar">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                      </svg>
+                    </button>
+                    <button
+                      (click)="deleteUser(user)"
+                      class="text-red-600 hover:text-red-900"
+                      title="Eliminar">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div *ngIf="activeTab === 'providers'">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Gestión de Proveedores</h2>
+            <button
+              (click)="openCreateProviderModal()"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Nuevo Proveedor
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div *ngFor="let provider of providers" class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow"
+              [class.opacity-50]="!provider.is_active">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex-1">
+                  <h3 class="text-lg font-bold text-gray-900 mb-1">{{ provider.nombre }}</h3>
+                  <p class="text-sm text-gray-600 font-mono">RFC: {{ provider.rfc }}</p>
+                </div>
+                <button
+                  (click)="toggleProviderActive(provider)"
+                  class="px-2 py-1 rounded-full text-xs font-semibold"
+                  [class.bg-green-100]="provider.is_active"
+                  [class.text-green-800]="provider.is_active"
+                  [class.bg-red-100]="!provider.is_active"
+                  [class.text-red-800]="!provider.is_active">
+                  {{ provider.is_active ? 'Activo' : 'Inactivo' }}
+                </button>
+              </div>
+
+              <div class="space-y-2 mb-4">
+                <div *ngIf="provider.email" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                  {{ provider.email }}
+                </div>
+                <div *ngIf="provider.telefono" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                  {{ provider.telefono }}
+                </div>
+                <div *ngIf="provider.ciudad" class="flex items-center text-sm text-gray-600">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  {{ provider.ciudad }}
+                </div>
+              </div>
+
+              <div class="flex gap-2 mt-4 pt-4 border-t border-gray-200">
+                <button
+                  (click)="openEditProviderModal(provider)"
+                  class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                  Editar
+                </button>
+                <button
+                  (click)="deleteProvider(provider)"
+                  class="flex-1 bg-red-50 hover:bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="providers.length === 0" class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay proveedores</h3>
+            <p class="text-gray-600 mb-4">Comienza agregando tu primer proveedor</p>
+            <button
+              (click)="openCreateProviderModal()"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              Crear Proveedor
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="activeTab === 'orders'">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Gestión de Presupuestos</h2>
+            <p class="text-gray-600">Administra y elimina presupuestos del sistema</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Folio</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículo</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Presupuesto</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let order of orders" class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ order.folio }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ order.customer?.nombre_completo || 'N/A' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div *ngIf="order.vehicle">
+                      {{ order.vehicle.marca }} {{ order.vehicle.modelo }}
+                      <div class="text-xs text-gray-400">{{ order.vehicle.placas }}</div>
+                    </div>
+                    <span *ngIf="!order.vehicle">N/A</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full" [class]="getStatusClass(order.status)">
+                      {{ order.status }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-semibold text-gray-900">
+                    ${{ order.presupuesto?.toFixed(2) || '0.00' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <button
+                      (click)="confirmDeleteOrder(order)"
+                      class="text-red-600 hover:text-red-900"
+                      title="Eliminar presupuesto">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="orders.length === 0" class="text-center py-12">
+            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay presupuestos</h3>
+            <p class="text-gray-600">Los presupuestos aparecerán aquí</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex justify-between items-center">
+        <h3 class="text-xl font-bold text-white">
+          {{ editingUser ? 'Editar Usuario' : 'Nuevo Usuario' }}
+        </h3>
+        <button (click)="showUserModal = false" class="text-white hover:text-gray-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo *</label>
+            <input
+              type="text"
+              [(ngModel)]="newUser.full_name"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Juan Pérez García"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <input
+              type="email"
+              [(ngModel)]="newUser.email"
+              [disabled]="editingUser"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+              placeholder="correo@ejemplo.com"
+            />
+          </div>
+
+          <div *ngIf="!editingUser">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña *</label>
+            <input
+              type="password"
+              [(ngModel)]="newUser.password"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Mínimo 6 caracteres"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Rol *</label>
+            <select
+              [(ngModel)]="newUser.role"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="admin_corporativo">Admin Corporativo</option>
+              <option value="gerente">Gerente</option>
+              <option value="tecnico">Técnico</option>
+              <option value="asesor_tecnico">Asesor Técnico</option>
+            </select>
+          </div>
+
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              [(ngModel)]="newUser.is_active"
+              id="userActive"
+              class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label for="userActive" class="ml-2 block text-sm text-gray-900">
+              Usuario activo
+            </label>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button
+            (click)="showUserModal = false"
+            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="saveUser()"
+            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            {{ editingUser ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showProviderModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4 flex justify-between items-center">
+        <h3 class="text-xl font-bold text-white">
+          {{ editingProvider ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
+        </h3>
+        <button (click)="showProviderModal = false" class="text-white hover:text-gray-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la Empresa *</label>
+            <input
+              type="text"
+              [(ngModel)]="newProvider.nombre"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Autopartes S.A. de C.V."
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">RFC *</label>
+            <input
+              type="text"
+              [(ngModel)]="newProvider.rfc"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="AUTO123456ABC"
+              maxlength="13"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              [(ngModel)]="newProvider.email"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="contacto@proveedor.com"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+            <input
+              type="tel"
+              [(ngModel)]="newProvider.telefono"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="555-1234-5678"
+            />
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+            <input
+              type="text"
+              [(ngModel)]="newProvider.direccion"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Calle Principal #123, Col. Centro"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+            <input
+              type="text"
+              [(ngModel)]="newProvider.ciudad"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Ciudad de México"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Código Postal</label>
+            <input
+              type="text"
+              [(ngModel)]="newProvider.codigo_postal"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="12345"
+              maxlength="5"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de Contacto</label>
+            <input
+              type="text"
+              [(ngModel)]="newProvider.contacto_nombre"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="María González"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono de Contacto</label>
+            <input
+              type="tel"
+              [(ngModel)]="newProvider.contacto_telefono"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="555-9876-5432"
+            />
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+            <textarea
+              [(ngModel)]="newProvider.notas"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Información adicional sobre el proveedor..."
+            ></textarea>
+          </div>
+
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              [(ngModel)]="newProvider.is_active"
+              id="providerActive"
+              class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+            />
+            <label for="providerActive" class="ml-2 block text-sm text-gray-900">
+              Proveedor activo
+            </label>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button
+            (click)="showProviderModal = false"
+            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="saveProvider()"
+            class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            {{ editingProvider ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showOrderDeleteConfirm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+      <div class="bg-red-600 px-6 py-4">
+        <h3 class="text-xl font-bold text-white">Confirmar Eliminación</h3>
+      </div>
+
+      <div class="p-6">
+        <div class="flex items-center mb-4">
+          <div class="bg-red-100 p-3 rounded-full mr-4">
+            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+          </div>
+          <div>
+            <p class="text-gray-900 font-medium">¿Estás seguro de eliminar este presupuesto?</p>
+            <p class="text-sm text-gray-600 mt-1">Folio: {{ orderToDelete?.folio }}</p>
+            <p class="text-xs text-red-600 mt-2">Esta acción no se puede deshacer.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-6">
+          <button
+            (click)="showOrderDeleteConfirm = false; orderToDelete = null"
+            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="deleteOrder()"
+            class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

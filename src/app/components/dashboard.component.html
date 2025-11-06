@@ -1,0 +1,3192 @@
+<div class="min-h-screen bg-gray-100">
+  <!-- Header with gradient background -->
+  <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <!-- Left side: Centro Automotriz and Welcome -->
+        <div class="flex flex-col space-y-2">
+          <!-- Centro Automotriz - Large and Animated -->
+          <div *ngIf="user?.autocenter" class="flex items-center gap-3 animate-fade-in">
+            <div class="bg-white/20 rounded-lg px-4 py-2 backdrop-blur-sm animate-pulse-slow">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              </svg>
+            </div>
+            <div class="animate-slide-in-left">
+              <p class="text-xs text-blue-200 font-medium uppercase tracking-wider">Centro Automotriz</p>
+              <h2 class="text-2xl font-bold text-white drop-shadow-lg">{{ user?.autocenter }}</h2>
+            </div>
+          </div>
+
+          <!-- Title and Welcome -->
+          <div class="flex items-center gap-4">
+            <h1 class="text-xl font-semibold text-white/90">Panel de Control - Autoservicio</h1>
+            <div class="h-6 w-px bg-white/30"></div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-blue-100">Bienvenido,</span>
+              <span class="text-sm font-semibold text-white">{{ user?.full_name || 'Usuario' }}</span>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold shadow-sm"
+                    [ngClass]="{
+                      'bg-purple-400 text-purple-900': auth.isSuperAdmin(),
+                      'bg-indigo-400 text-indigo-900': auth.isAdminCorporativo(),
+                      'bg-cyan-400 text-cyan-900': auth.isGerente(),
+                      'bg-green-400 text-green-900': auth.isTecnico(),
+                      'bg-yellow-400 text-yellow-900': auth.isAsesorTecnico()
+                    }">
+                {{ getRoleLabel() }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right side: Action buttons -->
+        <div class="flex items-center space-x-3">
+          <button
+            *ngIf="auth.canManageUsers()"
+            (click)="goToUserManagement()"
+            class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 border border-white/30 hover:scale-105">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            Usuarios
+          </button>
+          <button
+            *ngIf="auth.isAdminCorporativo() || auth.isSuperAdmin()"
+            (click)="goToAnalytics()"
+            class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 border border-white/30 hover:scale-105">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Dashboard Gerencial
+          </button>
+          <button
+            *ngIf="auth.isSuperAdmin()"
+            (click)="goToAudit()"
+            class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 border border-white/30 hover:scale-105">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Auditoría Avanzada
+          </button>
+          <button
+            (click)="logout()"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:scale-105">
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex space-x-8" aria-label="Tabs">
+        <button
+          (click)="setActiveView('dashboard')"
+          [class]="activeView === 'dashboard' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+          Dashboard
+        </button>
+        <button
+          (click)="startNewOrder()"
+          [class]="activeView === 'new-order' || activeView === 'customer-search' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+          Nuevo Presupuesto
+        </button>
+        <button
+          (click)="viewLostSalesReport()"
+          [class]="activeView === 'lost-sales-report' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+          Ventas Perdidas
+        </button>
+        <button
+          *ngIf="auth.canViewReports()"
+          (click)="viewLostSalesReport()"
+          [class]="activeView === 'lost-sales-report' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+          Reportes
+        </button>
+        <button
+          *ngIf="auth.isGerente() || auth.isAdminCorporativo() || auth.isSuperAdmin()"
+          (click)="setActiveView('admin-validation')"
+          [class]="activeView === 'admin-validation' ? 'border-purple-500 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Validación Admin
+          <span *ngIf="pendingValidationCount > 0" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold text-white bg-purple-600 rounded-full">
+            {{ pendingValidationCount }}
+          </span>
+        </button>
+        <button
+          *ngIf="auth.isAdminCorporativo() || auth.isSuperAdmin()"
+          (click)="setActiveView('pre-oc-validation')"
+          [class]="activeView === 'pre-oc-validation' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+          Validación Pre-OC
+          <span *ngIf="pendingPreOCCount > 0" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold text-white bg-indigo-600 rounded-full">
+            {{ pendingPreOCCount }}
+          </span>
+        </button>
+        <button
+          *ngIf="auth.isAdminCorporativo() || auth.isSuperAdmin()"
+          (click)="setActiveView('not-found-products')"
+          [class]="activeView === 'not-found-products' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+          Productos No Encontrados
+          <span *ngIf="notFoundProductsCount > 0" class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold text-white bg-orange-600 rounded-full">
+            {{ notFoundProductsCount }}
+          </span>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div *ngIf="activeView === 'dashboard'">
+      <!-- Admin Stats -->
+      <div *ngIf="auth.isGerente() || auth.isAdminCorporativo() || auth.isSuperAdmin()" class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Panel de Administración</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+            <div class="p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">Total Usuarios</p>
+                  <p class="text-3xl font-bold text-gray-900 mt-2">{{ adminStats.totalUsers }}</p>
+                  <p class="text-sm text-green-600 mt-1">{{ adminStats.activeUsers }} activos</p>
+                </div>
+                <div class="bg-blue-100 rounded-full p-3">
+                  <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+            <div class="p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">Total Presupuestos</p>
+                  <p class="text-3xl font-bold text-gray-900 mt-2">{{ adminStats.totalOrders }}</p>
+                  <p class="text-sm text-yellow-600 mt-1">{{ adminStats.pendingOrders }} pendientes</p>
+                </div>
+                <div class="bg-green-100 rounded-full p-3">
+                  <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+            <div class="p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-600">Ingresos Totales</p>
+                  <p class="text-3xl font-bold text-gray-900 mt-2">${{ adminStats.totalRevenue | number:'1.2-2' }}</p>
+                  <p class="text-sm text-gray-600 mt-1">{{ adminStats.totalCustomers }} clientes</p>
+                </div>
+                <div class="bg-purple-100 rounded-full p-3">
+                  <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions for Admin -->
+        <div class="bg-white shadow-sm rounded-xl border border-gray-200 p-6 mb-8">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button
+              (click)="goToUserManagement()"
+              class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+              <svg class="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+              </svg>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Gestionar Usuarios</p>
+                <p class="text-sm text-gray-600">Crear y administrar usuarios</p>
+              </div>
+            </button>
+
+            <button
+              (click)="goToAudit()"
+              class="flex items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+              <svg class="w-6 h-6 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Ver Auditoría</p>
+                <p class="text-sm text-gray-600">Registro de actividades</p>
+              </div>
+            </button>
+
+            <button
+              (click)="setActiveView('admin-validation')"
+              class="flex items-center p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors">
+              <svg class="w-6 h-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Validar Presupuestos</p>
+                <p class="text-sm text-gray-600">{{ pendingValidationCount }} pendientes</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div *ngFor="let stat of stats" class="bg-white overflow-hidden shadow-sm rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+          <div class="p-5">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <div [class]="stat.color + ' rounded-lg p-3'" [innerHTML]="stat.icon"></div>
+              </div>
+              <div class="ml-5 w-0 flex-1">
+                <dl>
+                  <dt class="text-sm font-medium text-gray-500 truncate">{{ stat.title }}</dt>
+                  <dd class="text-2xl font-bold text-gray-900 mt-1">{{ stat.value }}</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search and Filters -->
+      <div class="bg-white shadow-sm rounded-xl border border-gray-200 p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Buscar Presupuesto</label>
+            <div class="relative">
+              <input
+                type="text"
+                [(ngModel)]="searchQuery"
+                (input)="filterOrders()"
+                placeholder="Folio, cliente, vehículo..."
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+            <select
+              [(ngModel)]="filterStatus"
+              (change)="filterOrders()"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Todos</option>
+              <option value="Pendiente de Autorización">Pendiente</option>
+              <option value="Autorizado">Autorizado</option>
+              <option value="Completado">Completado</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+            <select
+              [(ngModel)]="sortBy"
+              (change)="filterOrders()"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="fecha-desc">Más reciente</option>
+              <option value="fecha-asc">Más antiguo</option>
+              <option value="monto-desc">Mayor monto</option>
+              <option value="monto-asc">Menor monto</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Presupuestos Recientes</h3>
+              <p class="mt-1 text-sm text-gray-500">{{ filteredOrders.length }} presupuesto(s) encontrado(s)</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button
+                (click)="refreshOrders()"
+                class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+              >
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Actualizar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-hidden">
+          <table class="w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">Folio</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículo</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Fecha</th>
+                <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-28">Monto</th>
+                <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let order of filteredOrders" class="hover:bg-gray-50 transition-colors">
+                <td class="px-3 py-3">
+                  <div class="flex items-center">
+                    <div class="h-7 w-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <span class="text-xs font-bold text-blue-600">{{ order.folio.slice(-3) }}</span>
+                    </div>
+                    <div class="ml-2 truncate">
+                      <div class="text-xs font-medium text-gray-900 truncate">{{ order.folio }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-3 py-3">
+                  <div class="text-sm text-gray-900 truncate max-w-xs">{{ order.cliente }}</div>
+                  <div class="text-xs text-gray-500 truncate">{{ order.tienda }}</div>
+                </td>
+                <td class="px-3 py-3">
+                  <div class="text-sm text-gray-900">{{ order.vehiculo?.placas || 'N/A' }}</div>
+                  <div class="text-xs text-gray-500 truncate">{{ order.vehiculo?.marca }} {{ order.vehiculo?.modelo }}</div>
+                </td>
+                <td class="px-3 py-3">
+                  <div class="text-xs text-gray-900">{{ order.fecha | date:'dd/MM/yy' }}</div>
+                  <div class="text-xs text-gray-500">{{ order.fecha | date:'HH:mm' }}</div>
+                </td>
+                <td class="px-3 py-3 text-right">
+                  <div class="text-sm font-semibold text-gray-900">${{ order.presupuesto | number:'1.0-0' }}</div>
+                </td>
+                <td class="px-3 py-3">
+                  <span [class]="getStatusClass(order.status)" class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium truncate max-w-full">
+                    <span class="truncate">{{ order.status }}</span>
+                  </span>
+                </td>
+                <td class="px-3 py-3 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <button
+                      (click)="viewOrderDetail(order)"
+                      class="text-blue-600 hover:text-blue-900 text-xs font-medium"
+                      title="Ver detalle"
+                    >
+                      Ver
+                    </button>
+                    <button
+                      *ngIf="canDeleteOrders()"
+                      (click)="deleteOrder(order)"
+                      class="text-red-600 hover:text-red-900 text-xs font-medium"
+                      title="Eliminar presupuesto"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="filteredOrders.length === 0">
+                <td colspan="7" class="px-6 py-12 text-center">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  <h3 class="mt-2 text-sm font-medium text-gray-900">No hay presupuestos</h3>
+                  <p class="mt-1 text-sm text-gray-500">No se encontraron presupuestos con los filtros aplicados.</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeView === 'customer-search'">
+      <app-customer-search (customerSelectedEvent)="onCustomerSelected($event)"></app-customer-search>
+    </div>
+
+    <div *ngIf="activeView === 'new-order'">
+      <div *ngIf="selectedCustomer" class="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg p-6 mb-6 shadow-lg">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-start gap-4 flex-1">
+            <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-md">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-base font-bold text-green-900 mb-3">Información del Cliente y Vehículo</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-lg p-3 border border-green-200">
+                  <p class="text-xs text-gray-500 font-medium mb-1">Cliente</p>
+                  <p class="text-base font-bold text-gray-900">{{ selectedCustomer.nombre_completo }}</p>
+                  <p class="text-sm text-gray-700 mt-1">Tel: {{ selectedCustomer.telefono }}</p>
+                  <p *ngIf="selectedCustomer.email" class="text-sm text-gray-600 mt-1">{{ selectedCustomer.email }}</p>
+                  <p *ngIf="selectedCustomer.direccion" class="text-xs text-gray-600 mt-1">{{ selectedCustomer.direccion }}</p>
+                </div>
+                <div class="bg-white rounded-lg p-3 border border-blue-200">
+                  <div class="flex items-start justify-between mb-1">
+                    <p class="text-xs text-gray-500 font-medium">Vehículo</p>
+                    <button
+                      *ngIf="selectedVehicle"
+                      type="button"
+                      (click)="clearVehicleSelection()"
+                      class="text-xs text-red-600 hover:text-red-800 font-medium flex items-center gap-1"
+                      title="Cambiar vehículo"
+                    >
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                      Cambiar
+                    </button>
+                  </div>
+                  <div *ngIf="selectedVehicle && !showVehicleSelector && !isEditingVehicle">
+                    <p class="text-base font-bold text-gray-900">
+                      {{ selectedVehicle.marca }} {{ selectedVehicle.modelo }} {{ selectedVehicle.anio }}
+                    </p>
+                    <p class="text-sm text-gray-700 mt-1">
+                      Placas: {{ selectedVehicle.placas }}
+                    </p>
+                    <p *ngIf="selectedVehicle.color" class="text-sm text-gray-600 mt-1">
+                      Color: {{ selectedVehicle.color }}
+                    </p>
+                    <p *ngIf="selectedVehicle.numero_serie" class="text-sm text-gray-600 mt-1">
+                      N° Serie: {{ selectedVehicle.numero_serie }}
+                    </p>
+                    <p *ngIf="selectedVehicle.kilometraje_inicial" class="text-sm text-gray-600 mt-1">
+                      Km: {{ selectedVehicle.kilometraje_inicial | number }}
+                    </p>
+                    <button
+                      type="button"
+                      (click)="startEditingVehicle()"
+                      class="mt-2 text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+                    >
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                      </svg>
+                      Editar
+                    </button>
+                  </div>
+                  <div *ngIf="selectedVehicle && isEditingVehicle" class="space-y-2">
+                    <div class="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        [(ngModel)]="editingVehicleData.marca"
+                        placeholder="Marca"
+                        class="text-xs border-gray-300 rounded px-2 py-1 border"
+                      />
+                      <input
+                        type="text"
+                        [(ngModel)]="editingVehicleData.modelo"
+                        placeholder="Modelo"
+                        class="text-xs border-gray-300 rounded px-2 py-1 border"
+                      />
+                      <input
+                        type="text"
+                        [(ngModel)]="editingVehicleData.anio"
+                        placeholder="Año"
+                        class="text-xs border-gray-300 rounded px-2 py-1 border"
+                      />
+                      <input
+                        type="text"
+                        [(ngModel)]="editingVehicleData.placas"
+                        placeholder="Placas"
+                        class="text-xs border-gray-300 rounded px-2 py-1 border"
+                      />
+                      <input
+                        type="text"
+                        [(ngModel)]="editingVehicleData.color"
+                        placeholder="Color"
+                        class="text-xs border-gray-300 rounded px-2 py-1 border"
+                      />
+                      <input
+                        type="text"
+                        [(ngModel)]="editingVehicleData.numero_serie"
+                        placeholder="N° Serie"
+                        class="text-xs border-gray-300 rounded px-2 py-1 border"
+                      />
+                      <input
+                        type="number"
+                        [(ngModel)]="editingVehicleData.kilometraje_inicial"
+                        placeholder="Kilometraje"
+                        class="text-xs border-gray-300 rounded px-2 py-1 border col-span-2"
+                      />
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        type="button"
+                        (click)="saveVehicleEdit()"
+                        class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-medium"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        type="button"
+                        (click)="cancelVehicleEdit()"
+                        class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 px-3 py-1 rounded text-xs font-medium"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                  <div *ngIf="!selectedVehicle || showVehicleSelector">
+                    <p class="text-sm text-gray-500 italic">Seleccione un vehículo abajo</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            (click)="startNewOrder()"
+            class="text-gray-500 hover:text-gray-700 ml-4"
+            title="Reiniciar y buscar otro cliente"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div *ngIf="!selectedVehicle || showVehicleSelector" class="border-t border-green-200 pt-4">
+          <h5 class="text-sm font-semibold text-gray-900 mb-3">
+            <svg class="w-5 h-5 inline-block mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+            </svg>
+            Seleccionar Vehículo
+          </h5>
+          <div *ngIf="customerVehicles.length > 0 && !showNewVehicleForm" class="space-y-3">
+            <p class="text-xs text-gray-600 mb-2">Vehículos registrados ({{ customerVehicles.length }})</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div
+                *ngFor="let vehicle of customerVehicles"
+                (click)="selectVehicleFromList(vehicle)"
+                class="bg-white border-2 border-gray-200 rounded-lg p-3 hover:border-blue-400 cursor-pointer transition-all hover:shadow-md"
+              >
+                <p class="text-sm font-semibold text-gray-900 mb-1">
+                  {{ vehicle.marca }} {{ vehicle.modelo }}
+                </p>
+                <div class="space-y-0.5 text-xs text-gray-600">
+                  <p><span class="font-medium">Placas:</span> {{ vehicle.placas }}</p>
+                  <p><span class="font-medium">Año:</span> {{ vehicle.anio }}</p>
+                  <p *ngIf="vehicle.color"><span class="font-medium">Color:</span> {{ vehicle.color }}</p>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="showNewVehicleForm = true"
+              class="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+              Registrar Nuevo Vehículo
+            </button>
+          </div>
+
+          <div *ngIf="showNewVehicleForm" class="space-y-3">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p class="text-sm text-blue-800 font-medium">Registrar Nuevo Vehículo</p>
+              <p class="text-xs text-blue-600 mt-1">Complete la información del vehículo</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Placas *</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newVehicle.placas"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-2 py-1.5 border"
+                  placeholder="ABC-123"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Marca *</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newVehicle.marca"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-2 py-1.5 border"
+                  placeholder="Toyota, Honda, etc."
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Modelo *</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newVehicle.modelo"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-2 py-1.5 border"
+                  placeholder="Corolla, Civic, etc."
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Año *</label>
+                <input
+                  type="number"
+                  [(ngModel)]="newVehicle.anio"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-2 py-1.5 border"
+                  placeholder="2020"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Color</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newVehicle.color"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-2 py-1.5 border"
+                  placeholder="Blanco, Negro, etc."
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Número de Serie</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newVehicle.numero_serie"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-2 py-1.5 border"
+                  placeholder="Número de serie del vehículo"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Kilometraje Inicial</label>
+                <input
+                  type="number"
+                  [(ngModel)]="newVehicle.kilometraje_inicial"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-2 py-1.5 border"
+                  placeholder="50000"
+                />
+              </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+              <button
+                type="button"
+                (click)="saveNewVehicle()"
+                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Guardar Vehículo
+              </button>
+              <button
+                type="button"
+                (click)="cancelNewVehicle()"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="customerVehicles.length === 0 && !showNewVehicleForm" class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
+            <p class="text-sm text-gray-600 mb-3">Este cliente no tiene vehículos registrados</p>
+            <button
+              type="button"
+              (click)="showNewVehicleForm = true"
+              class="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 mx-auto"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+              </svg>
+              Registrar Nuevo Vehículo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Crear Nuevo Presupuesto</h3>
+
+          <form (ngSubmit)="onCreateOrder()" #orderForm="ngForm">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label for="folio" class="block text-sm font-medium text-gray-700">Folio del Presupuesto</label>
+                <input
+                  type="text"
+                  id="folio"
+                  [(ngModel)]="newOrder.folio"
+                  name="folio"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
+                  placeholder="Dejar vacío para generar automáticamente"
+                />
+              </div>
+
+              <div>
+                <label for="tienda" class="block text-sm font-medium text-gray-700">Centro Automotriz *</label>
+                <input
+                  type="text"
+                  id="tienda"
+                  [value]="newOrder.tienda || user?.autocenter || ''"
+                  readonly
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-700 sm:text-sm px-3 py-2 border cursor-not-allowed"
+                  placeholder="Centro automotriz asignado"
+                />
+              </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-4">
+              <h4 class="text-lg font-medium text-gray-900 mb-4">Refacciones</h4>
+
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div class="mb-4">
+                  <label for="paymentType" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Pago / Margen</label>
+                  <select
+                    id="paymentType"
+                    [(ngModel)]="selectedPaymentType"
+                    name="paymentType"
+                    (change)="onPaymentTypeChange()"
+                    class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-3 py-2 border"
+                  >
+                    <option value="">Seleccionar tipo de pago</option>
+                    <option value="39">39% - Pago en 1 sola exhibición</option>
+                    <option value="50">50% - Pago arriba de 12 meses</option>
+                    <option value="48">48% - Pago entre 6 y 9 meses</option>
+                    <option value="28">28% - Pago empleado Carso</option>
+                    <option value="17">17% - Pago Autos Flotilla</option>
+                  </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label for="productDescription" class="block text-sm font-medium text-gray-700">Descripción</label>
+                    <input
+                      type="text"
+                      id="productDescription"
+                      [(ngModel)]="newProduct.descripcion"
+                      name="productDescription"
+                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
+                      placeholder="Descripción de la refacción"
+                    />
+                  </div>
+
+                  <div>
+                    <label for="productCost" class="block text-sm font-medium text-gray-700">Costo (sin IVA)</label>
+                    <input
+                      type="number"
+                      id="productCost"
+                      [(ngModel)]="newProduct.costo"
+                      name="productCost"
+                      min="0"
+                      step="0.01"
+                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <div>
+                    <label for="productQuantity" class="block text-sm font-medium text-gray-700">Cantidad</label>
+                    <input
+                      type="number"
+                      id="productQuantity"
+                      [(ngModel)]="newProduct.cantidad"
+                      name="productQuantity"
+                      min="1"
+                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm px-3 py-2 border"
+                    />
+                  </div>
+                </div>
+
+                <div class="mt-4 flex items-center gap-3">
+                  <button
+                    type="button"
+                    (click)="addProduct()"
+                    [disabled]="!selectedPaymentType"
+                    class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    {{ isEditingProduct ? 'Actualizar Producto' : 'Agregar Refacción' }}
+                  </button>
+                  <button
+                    *ngIf="isEditingProduct"
+                    type="button"
+                    (click)="cancelEditProduct()"
+                    class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <span *ngIf="!selectedPaymentType" class="text-sm text-red-600">* Debe seleccionar un tipo de pago</span>
+                </div>
+              </div>
+
+              <div *ngIf="newOrder.productos.length > 0" class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Venta Público</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilidad</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Margen</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let product of newOrder.productos; let i = index">
+                      <td class="px-3 py-2 text-sm text-gray-900">{{ product.descripcion }}</td>
+                      <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">${{ (product.costoConIva || 0).toFixed(2) }}</td>
+                      <td class="px-3 py-2 whitespace-nowrap text-sm font-semibold text-green-600">${{ (product.precioVentaPublico || 0).toFixed(2) }}</td>
+                      <td class="px-3 py-2 whitespace-nowrap text-sm font-semibold text-blue-600">${{ (product.margen || 0).toFixed(2) }}</td>
+                      <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">{{ (product.porcentajeMargen || 0).toFixed(2) }}%</td>
+                      <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-900">{{ product.cantidad }}</td>
+                      <td class="px-3 py-2 whitespace-nowrap text-sm font-medium">
+                        <button
+                          type="button"
+                          (click)="editProduct(i)"
+                          class="text-blue-600 hover:text-blue-900 mr-3"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          (click)="removeProduct(i)"
+                          class="text-red-600 hover:text-red-900"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-4">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-medium text-gray-900">Mano de Obra</h4>
+                <button
+                  type="button"
+                  (click)="showServicesSection = !showServicesSection"
+                  class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  {{ showServicesSection ? 'Ocultar' : 'Agregar' }} Servicios
+                </button>
+              </div>
+
+              <div *ngIf="showServicesSection" class="bg-gray-50 p-4 rounded-lg mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label for="serviceCategory" class="block text-sm font-medium text-gray-700 mb-1">Categoría de Servicio</label>
+                    <select
+                      id="serviceCategory"
+                      [(ngModel)]="orderSelectedCategory"
+                      name="serviceCategory"
+                      (change)="onServiceCategoryChange()"
+                      class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-3 py-2 border"
+                    >
+                      <option value="">Seleccionar categoría</option>
+                      <option *ngFor="let category of serviceCategories" [value]="category">{{ category }}</option>
+                    </select>
+                  </div>
+
+                  <div *ngIf="availableServices.length > 0">
+                    <label for="predefinedService" class="block text-sm font-medium text-gray-700 mb-1">Servicio Predefinido</label>
+                    <select
+                      id="predefinedService"
+                      (change)="onServiceSelectBySku($any($event.target).value)"
+                      class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm px-3 py-2 border"
+                    >
+                      <option value="">Seleccionar servicio</option>
+                      <option *ngFor="let service of availableServices" [value]="service.sku">
+                        {{ service.nombre }} - ${{ service.precioConIva.toFixed(2) }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div *ngIf="selectedServiceData" class="mb-4 p-4 bg-white rounded-lg border border-blue-200">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex-1">
+                      <h5 class="font-semibold text-blue-900 text-lg">{{ selectedServiceData.nombre }}</h5>
+                      <p class="text-xs text-gray-500 mt-1">SKU: {{ selectedServiceData.sku }}</p>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-sm font-semibold text-green-600">Precio: ${{ selectedServiceData.precioConIva.toFixed(2) }}</p>
+                    </div>
+                  </div>
+                  <p class="text-sm text-gray-700 mt-2">{{ selectedServiceData.descripcion }}</p>
+                </div>
+
+                <div class="flex gap-4">
+                  <button
+                    type="button"
+                    (click)="addService()"
+                    [disabled]="!selectedServiceData"
+                    class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Agregar Mano de Obra
+                  </button>
+                  <button
+                    type="button"
+                    (click)="showServicesSection = false"
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="newOrder.servicios && newOrder.servicios.length > 0" class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mano de Obra</th>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <tr *ngFor="let service of newOrder.servicios; let i = index">
+                      <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ service.sku }}</td>
+                      <td class="px-4 py-2 text-sm text-gray-900">{{ service.nombre }}</td>
+                      <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{{ service.categoria }}</td>
+                      <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">${{ service.precio.toFixed(2) }}</td>
+                      <td class="px-4 py-2 whitespace-nowrap text-sm font-medium">
+                        <button
+                          type="button"
+                          (click)="removeService(i)"
+                          class="text-red-600 hover:text-red-900"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-4">
+              <div class="bg-white rounded-lg border border-gray-200 p-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="text-base font-semibold text-gray-900">Recomendaciones del Vehículo</h3>
+                      <p class="text-sm text-gray-600">Clasificar condición de componentes y sistemas</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="openDiagnosticModal()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Agregar Recomendaciones
+                  </button>
+                </div>
+
+                <div *ngIf="newOrder.diagnostic!.items.length > 0" class="mt-4 bg-gray-50 rounded-lg p-4">
+                  <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-sm font-medium text-gray-900">Recomendaciones Registradas</h4>
+                    <button
+                      type="button"
+                      (click)="openDiagnosticModal()"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      Ver/Editar
+                    </button>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div class="text-center">
+                      <div class="text-2xl font-bold text-red-600">{{ getItemCountBySeverity('urgent') }}</div>
+                      <div class="text-xs text-gray-600">Urgentes</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-2xl font-bold text-yellow-600">{{ getItemCountBySeverity('recommended') }}</div>
+                      <div class="text-xs text-gray-600">Recomendables</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-2xl font-bold text-green-600">{{ getItemCountBySeverity('good') }}</div>
+                      <div class="text-xs text-gray-600">En Buen Estado</div>
+                    </div>
+                  </div>
+
+                  <div class="border-t border-gray-300 pt-3">
+                    <h5 class="text-xs font-medium text-gray-700 mb-2">Items Recomendados:</h5>
+                    <div class="space-y-2 max-h-60 overflow-y-auto">
+                      <div
+                        *ngFor="let item of newOrder.diagnostic!.items"
+                        class="bg-white rounded p-2 border-l-4"
+                        [class.border-red-500]="item.severity === 'urgent'"
+                        [class.border-yellow-500]="item.severity === 'recommended'"
+                        [class.border-green-500]="item.severity === 'good'"
+                      >
+                        <div class="flex items-start justify-between">
+                          <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                              <span class="text-sm font-medium text-gray-900">{{ item.item }}</span>
+                              <span
+                                class="px-2 py-0.5 rounded-full text-xs font-medium"
+                                [class.bg-red-100]="item.severity === 'urgent'"
+                                [class.text-red-800]="item.severity === 'urgent'"
+                                [class.bg-yellow-100]="item.severity === 'recommended'"
+                                [class.text-yellow-800]="item.severity === 'recommended'"
+                                [class.bg-green-100]="item.severity === 'good'"
+                                [class.text-green-800]="item.severity === 'good'"
+                              >
+                                <span *ngIf="item.severity === 'urgent'">⚠️ Urgente</span>
+                                <span *ngIf="item.severity === 'recommended'">⚡ Recomendable</span>
+                                <span *ngIf="item.severity === 'good'">✓ Bien</span>
+                              </span>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-1">{{ item.description }}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Categoría: {{ getCategoryName(item.category) }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-6">
+              <div class="flex justify-end">
+                <div class="w-64">
+                  <div class="flex justify-between py-2">
+                    <span class="text-sm text-gray-600">Refacciones:</span>
+                    <span class="text-sm font-medium">${{ getProductsTotal().toFixed(2) }}</span>
+                  </div>
+                  <div class="flex justify-between py-2">
+                    <span class="text-sm text-gray-600">Servicios:</span>
+                    <span class="text-sm font-medium">${{ getServicesTotal().toFixed(2) }}</span>
+                  </div>
+                  <div class="flex justify-between py-2 border-t border-gray-200">
+                    <span class="text-base font-medium text-gray-900">Total:</span>
+                    <span class="text-base font-medium text-gray-900">${{ getOrderTotal().toFixed(2) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                (click)="cancelOrder()"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                [disabled]="!orderForm.valid || newOrder.productos.length === 0"
+                class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Crear Presupuesto
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeView === 'lost-sales-report'">
+      <app-lost-sales-report (closed)="closeLostSalesReport()"></app-lost-sales-report>
+    </div>
+
+    <div *ngIf="activeView === 'admin-validation' && (auth.isGerente() || auth.isAdminCorporativo() || auth.isSuperAdmin())">
+      <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-purple-50 to-purple-100">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-2xl font-bold text-purple-900 flex items-center gap-2">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Presupuestos Pendientes de Validación Admin
+              </h3>
+              <p class="mt-1 text-sm text-purple-700">{{ pendingValidationOrders.length }} presupuesto(s) esperando validación</p>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="pendingValidationOrders.length === 0" class="p-12 text-center">
+          <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay presupuestos pendientes</h3>
+          <p class="text-gray-600">Todos los presupuestos han sido validados</p>
+        </div>
+
+        <div *ngIf="pendingValidationOrders.length > 0" class="divide-y divide-gray-200">
+          <div *ngFor="let order of pendingValidationOrders" class="p-6 hover:bg-gray-50 transition-colors">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
+                    <span class="text-lg font-bold text-purple-600">{{ order.folio.slice(-3) }}</span>
+                  </div>
+                  <div>
+                    <h4 class="text-lg font-bold text-gray-900">{{ order.folio }}</h4>
+                    <p class="text-sm text-gray-600">{{ order.cliente }} - {{ order.tienda }}</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium">Vehículo</p>
+                    <p class="text-sm font-semibold text-gray-900">{{ order.vehiculo?.placas || 'N/A' }}</p>
+                    <p class="text-xs text-gray-600">{{ order.vehiculo?.marca }} {{ order.vehiculo?.modelo }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium">Fecha</p>
+                    <p class="text-sm font-semibold text-gray-900">{{ order.fecha | date:'dd/MM/yyyy' }}</p>
+                    <p class="text-xs text-gray-600">{{ order.fecha | date:'HH:mm' }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium">Presupuesto</p>
+                    <p class="text-sm font-bold text-green-600">${{ order.presupuesto | number:'1.2-2' }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium">Refacciones XML</p>
+                    <p class="text-sm font-bold text-blue-600">{{ order.xmlProducts?.length || 0 }} productos</p>
+                  </div>
+                </div>
+
+                <div *ngIf="order.xmlProducts && order.xmlProducts.length > 0" class="bg-gray-50 rounded-lg p-4 mb-4">
+                  <h5 class="text-sm font-semibold text-gray-900 mb-2">Resumen de Refacciones</h5>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div *ngFor="let product of order.xmlProducts.slice(0, 4)" class="text-xs">
+                      <span class="text-gray-600">{{ product.descripcion }}</span>
+                      <span class="text-gray-400"> - </span>
+                      <span class="font-semibold text-gray-900">${{ product.total | number:'1.2-2' }}</span>
+                    </div>
+                    <div *ngIf="order.xmlProducts.length > 4" class="text-xs text-gray-500 italic">
+                      ... y {{ order.xmlProducts.length - 4 }} productos más
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ml-6 flex flex-col gap-2">
+                <button
+                  (click)="approveOrder(order)"
+                  class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Aprobar
+                </button>
+                <button
+                  (click)="viewOrderDetail(order)"
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                  Ver Detalle
+                </button>
+                <button
+                  (click)="rejectOrder(order)"
+                  class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                  Rechazar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pre-OC Validation Tab -->
+    <div *ngIf="activeView === 'pre-oc-validation' && (auth.isAdminCorporativo() || auth.isSuperAdmin())">
+      <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-indigo-100">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-2xl font-bold text-indigo-900 flex items-center gap-2">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                Validaciones Pre-OC Pendientes
+              </h3>
+              <p class="mt-1 text-sm text-indigo-700">{{ pendingPreOCOrders.length }} orden(es) esperando doble chequeo antes de generar OC</p>
+            </div>
+            <button
+              (click)="loadPendingPreOCOrders()"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+              Actualizar
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="pendingPreOCOrders.length === 0" class="p-12 text-center">
+          <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay órdenes pendientes de validación Pre-OC</h3>
+          <p class="text-gray-600">Todas las órdenes han sido validadas para generar OC</p>
+        </div>
+
+        <div *ngIf="pendingPreOCOrders.length > 0" class="divide-y divide-gray-200">
+          <div *ngFor="let order of pendingPreOCOrders" class="p-6 hover:bg-gray-50 transition-colors">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <span class="text-lg font-bold text-indigo-600">{{ order.folio.slice(-3) }}</span>
+                  </div>
+                  <div>
+                    <h4 class="text-lg font-bold text-gray-900">{{ order.folio }}</h4>
+                    <p class="text-sm text-gray-600">{{ order.cliente }} - {{ order.tienda }}</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium">Vehículo</p>
+                    <p class="text-sm font-semibold text-gray-900">{{ order.vehicle?.placas || 'N/A' }}</p>
+                    <p class="text-xs text-gray-600">{{ order.vehicle?.marca }} {{ order.vehicle?.modelo }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium">Fecha</p>
+                    <p class="text-sm font-semibold text-gray-900">{{ order.fecha | date:'dd/MM/yyyy' }}</p>
+                    <p class="text-xs text-gray-600">{{ order.fecha | date:'HH:mm' }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium">Total</p>
+                    <p class="text-sm font-bold text-green-600">${{ order.presupuesto | number:'1.2-2' }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium">Productos Procesados</p>
+                    <p class="text-sm font-bold text-blue-600">{{ order.processedProductsCount || 0 }} productos</p>
+                  </div>
+                </div>
+
+                <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3 mb-4">
+                  <p class="text-sm font-medium text-indigo-900">
+                    ⚠️ Doble chequeo requerido antes de generar la Orden de Compra
+                  </p>
+                  <p class="text-xs text-indigo-700 mt-1">
+                    Revisa todos las refacciones y proveedores antes de aprobar
+                  </p>
+                </div>
+              </div>
+
+              <div class="ml-6 flex flex-col gap-2">
+                <button
+                  (click)="openPreOCValidation(order)"
+                  class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                  </svg>
+                  Validar Pre-OC
+                </button>
+                <button
+                  (click)="viewOrderDetail(order)"
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                  Ver Detalle
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Not Found Products Tab -->
+    <div *ngIf="activeView === 'not-found-products' && (auth.isAdminCorporativo() || auth.isSuperAdmin())">
+      <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-orange-100">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-2xl font-bold text-orange-900 flex items-center gap-2">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                Productos No Encontrados - Auto-Clasificados
+              </h3>
+              <p class="mt-1 text-sm text-orange-700">{{ notFoundProductsCount }} producto(s) clasificado(s) automáticamente como División 0134, Línea 260, Clase 271</p>
+            </div>
+            <button
+              (click)="loadNotFoundProducts()"
+              class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+              Actualizar
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="notFoundProducts.length === 0" class="p-12 text-center">
+          <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay productos auto-clasificados</h3>
+          <p class="text-gray-600">Todos las refacciones han sido encontrados en la base de datos</p>
+        </div>
+
+        <div *ngIf="notFoundProducts.length > 0" class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Factura / Pedido
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Producto
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Proveedor
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Clasificación
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Precio
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Cantidad
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let product of notFoundProducts" class="hover:bg-orange-50 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-medium text-gray-900">{{ product.invoice_folio || 'N/A' }}</span>
+                    <span class="text-xs text-gray-500">Pedido: {{ product.order_folio || 'N/A' }}</span>
+                    <span class="text-xs text-gray-500">{{ product.cliente || 'N/A' }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-medium text-gray-900">{{ product.descripcion }}</span>
+                    <span *ngIf="product.sku" class="text-xs text-gray-500">SKU: {{ product.sku }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="text-sm text-gray-900">{{ product.proveedor || 'N/A' }}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex flex-col">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mb-1">
+                      Auto-Clasificado
+                    </span>
+                    <span class="text-xs text-gray-600">División: {{ product.division || '0134' }}</span>
+                    <span class="text-xs text-gray-600">Línea: {{ product.linea || '260' }}</span>
+                    <span class="text-xs text-gray-600">Clase: {{ product.clase || '271' }}</span>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  ${{ product.precio | number:'1.2-2' }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ product.cantidad }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                  ${{ product.total | number:'1.2-2' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="notFoundProducts.length > 0" class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-600">
+              Total de productos auto-clasificados: <span class="font-semibold">{{ notFoundProductsCount }}</span>
+            </p>
+            <p class="text-sm font-semibold text-gray-900">
+              Total: ${{ getNotFoundProductsTotal() | number:'1.2-2' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Box -->
+      <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="ml-3 flex-1">
+            <h3 class="text-sm font-medium text-blue-800">Información sobre productos no encontrados</h3>
+            <div class="mt-2 text-sm text-blue-700">
+              <p>Estos productos no fueron encontrados en la base de datos durante el proceso de validación XML y fueron automáticamente clasificados con los siguientes valores:</p>
+              <ul class="list-disc list-inside mt-2 space-y-1">
+                <li><strong>División:</strong> 0134</li>
+                <li><strong>Línea:</strong> 260</li>
+                <li><strong>Clase:</strong> 271</li>
+              </ul>
+              <p class="mt-2">Esta clasificación automática permite continuar con el flujo de trabajo mientras se revisan estos productos para su correcta categorización en el futuro.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Pre-OC Validation -->
+<div *ngIf="showPreOCValidationModal && selectedOrder" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+  <app-pre-oc-validation
+    [order]="selectedOrder"
+    (onApprove)="approvePreOCValidation($event)"
+    (onReject)="rejectPreOCValidation($event)"
+    (onGeneratePO)="generatePurchaseOrder()"
+    (onClose)="closePreOCValidation()">
+  </app-pre-oc-validation>
+</div>
+
+<!-- Modal de Recomendaciones -->
+<div *ngIf="showDiagnosticModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+      <h2 class="text-xl font-semibold text-gray-900">Recomendaciones del Vehículo</h2>
+      <button
+        type="button"
+        (click)="closeDiagnosticModal()"
+        class="text-gray-400 hover:text-gray-600"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <app-vehicle-diagnostic
+        [diagnostic]="newOrder.diagnostic!"
+        [customerId]="selectedCustomer?.id || ''"
+        [hideVehicleSelection]="true"
+        [currentUserName]="user?.full_name"
+        [selectedMarginPercentage]="selectedPaymentType ? parseInt(selectedPaymentType) : 30"
+        (diagnosticChange)="onDiagnosticChange($event)"
+        (vehicleSelected)="onVehicleSelected($event)"
+        (cancelled)="closeDiagnosticModal()">
+      </app-vehicle-diagnostic>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showOrderDetail" class="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+  <div class="relative w-full max-w-7xl bg-white rounded-xl shadow-2xl max-h-[90vh] flex flex-col">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-blue-700">
+      <div>
+        <h3 class="text-xl font-bold text-white">Detalle del Presupuesto</h3>
+        <p class="text-sm text-blue-100 mt-0.5" *ngIf="selectedOrder">Folio: {{ selectedOrder.folio }} - {{ selectedOrder.cliente }}</p>
+      </div>
+      <button (click)="closeOrderDetail()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-lg p-2 transition-colors">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="border-b border-gray-200 bg-gray-50 px-6">
+      <nav class="flex gap-4 -mb-px">
+        <button
+          *ngIf="shouldShowBillingSection(selectedOrder)"
+          (click)="detailActiveTab = 'billing'"
+          [class.border-emerald-600]="detailActiveTab === 'billing'"
+          [class.text-emerald-600]="detailActiveTab === 'billing'"
+          [class.border-transparent]="detailActiveTab !== 'billing'"
+          [class.text-gray-500]="detailActiveTab !== 'billing'"
+          class="py-3 px-4 border-b-2 font-medium text-sm hover:text-emerald-600 hover:border-emerald-300 transition-colors flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+          Cobro Final
+        </button>
+        <button
+          (click)="detailActiveTab = 'info'"
+          [class.border-blue-600]="detailActiveTab === 'info'"
+          [class.text-blue-600]="detailActiveTab === 'info'"
+          [class.border-transparent]="detailActiveTab !== 'info'"
+          [class.text-gray-500]="detailActiveTab !== 'info'"
+          class="py-3 px-4 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300 transition-colors flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Información
+        </button>
+        <button
+          (click)="detailActiveTab = 'products'"
+          [class.border-blue-600]="detailActiveTab === 'products'"
+          [class.text-blue-600]="detailActiveTab === 'products'"
+          [class.border-transparent]="detailActiveTab !== 'products'"
+          [class.text-gray-500]="detailActiveTab !== 'products'"
+          class="py-3 px-4 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300 transition-colors flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+          </svg>
+          Refacciones ({{ selectedOrder?.productos?.length || 0 }})
+        </button>
+        <button
+          (click)="detailActiveTab = 'services'"
+          [class.border-blue-600]="detailActiveTab === 'services'"
+          [class.text-blue-600]="detailActiveTab === 'services'"
+          [class.border-transparent]="detailActiveTab !== 'services'"
+          [class.text-gray-500]="detailActiveTab !== 'services'"
+          class="py-3 px-4 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300 transition-colors flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+          Mano de Obra ({{ selectedOrder ? getTotalServicesCount(selectedOrder) : 0 }})
+        </button>
+        <button
+          (click)="detailActiveTab = 'summary'"
+          [class.border-green-600]="detailActiveTab === 'summary'"
+          [class.text-green-600]="detailActiveTab === 'summary'"
+          [class.border-transparent]="detailActiveTab !== 'summary'"
+          [class.text-gray-500]="detailActiveTab !== 'summary'"
+          class="py-3 px-4 border-b-2 font-medium text-sm hover:text-green-600 hover:border-green-300 transition-colors flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Resumen Autorizados
+        </button>
+        <button
+          (click)="detailActiveTab = 'diagnostic'"
+          [class.border-blue-600]="detailActiveTab === 'diagnostic'"
+          [class.text-blue-600]="detailActiveTab === 'diagnostic'"
+          [class.border-transparent]="detailActiveTab !== 'diagnostic'"
+          [class.text-gray-500]="detailActiveTab !== 'diagnostic'"
+          class="py-3 px-4 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300 transition-colors flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          Recomendaciones
+        </button>
+        <button
+          *ngIf="xmlProducts.length > 0"
+          (click)="detailActiveTab = 'xml-products'"
+          [class.border-blue-600]="detailActiveTab === 'xml-products'"
+          [class.text-blue-600]="detailActiveTab === 'xml-products'"
+          [class.border-transparent]="detailActiveTab !== 'xml-products'"
+          [class.text-gray-500]="detailActiveTab !== 'xml-products'"
+          class="py-3 px-4 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300 transition-colors flex items-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+          </svg>
+          Refacciones XML ({{ xmlProducts.length }})
+        </button>
+      </nav>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="selectedOrder" class="flex-1 overflow-y-auto p-6">
+
+      <!-- Info Tab -->
+      <div *ngIf="detailActiveTab === 'info'">
+        <div class="space-y-6">
+          <!-- Información del Presupuesto -->
+          <div class="bg-white border-2 border-blue-200 rounded-xl p-6">
+            <h3 class="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Información del Presupuesto
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="bg-blue-50 rounded-lg p-4">
+                <p class="text-xs text-blue-700 font-semibold mb-1">FOLIO</p>
+                <p class="text-lg font-bold text-blue-900">{{ selectedOrder.folio }}</p>
+              </div>
+              <div class="bg-purple-50 rounded-lg p-4">
+                <p class="text-xs text-purple-700 font-semibold mb-1">TIENDA</p>
+                <p class="text-lg font-bold text-purple-900">{{ selectedOrder.tienda }}</p>
+              </div>
+              <div class="bg-indigo-50 rounded-lg p-4">
+                <p class="text-xs text-indigo-700 font-semibold mb-1">DIVISIÓN</p>
+                <p class="text-lg font-bold text-indigo-900">{{ selectedOrder.division }}</p>
+              </div>
+              <div class="bg-green-50 rounded-lg p-4">
+                <p class="text-xs text-green-700 font-semibold mb-1">ESTADO</p>
+                <span [class]="getStatusClass(selectedOrder.status)" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold">
+                  {{ selectedOrder.status }}
+                </span>
+              </div>
+              <div class="bg-orange-50 rounded-lg p-4">
+                <p class="text-xs text-orange-700 font-semibold mb-1">FECHA CREACIÓN</p>
+                <p class="text-sm font-bold text-orange-900">{{ selectedOrder.fecha | date:'short' }}</p>
+              </div>
+              <div class="bg-teal-50 rounded-lg p-4">
+                <p class="text-xs text-teal-700 font-semibold mb-1">PRESUPUESTO</p>
+                <p class="text-lg font-bold text-teal-900">${{ selectedOrder.presupuesto | number:'1.2-2' }}</p>
+              </div>
+              <div *ngIf="selectedOrder.promotion" class="bg-pink-50 rounded-lg p-4">
+                <p class="text-xs text-pink-700 font-semibold mb-1">PROMOCIÓN</p>
+                <p class="text-sm font-bold text-pink-900">🎉 {{ selectedOrder.promotion }}</p>
+              </div>
+              <div *ngIf="selectedOrder.technician_name" class="bg-gray-50 rounded-lg p-4">
+                <p class="text-xs text-gray-700 font-semibold mb-1">TÉCNICO</p>
+                <p class="text-sm font-bold text-gray-900">{{ selectedOrder.technician_name }}</p>
+              </div>
+              <div class="bg-slate-50 rounded-lg p-4">
+                <p class="text-xs text-slate-700 font-semibold mb-1">N° TÉCNICO</p>
+                <p class="text-sm font-bold text-slate-900">{{ selectedOrder.technician_number || 'N/A' }}</p>
+              </div>
+              <div class="bg-amber-50 rounded-lg p-4">
+                <p class="text-xs text-amber-700 font-semibold mb-1">N° ORDEN DE COMPRA</p>
+                <p class="text-sm font-bold text-amber-900">{{ selectedOrder.purchase_order_number || 'N/A' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Información del Cliente -->
+          <div class="bg-white border-2 border-green-200 rounded-xl p-6">
+            <h3 class="text-lg font-bold text-green-900 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+              Información del Cliente
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="bg-green-50 rounded-lg p-4">
+                <p class="text-xs text-green-700 font-semibold mb-1">NOMBRE COMPLETO</p>
+                <p class="text-lg font-bold text-green-900">{{ selectedOrder.cliente }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.telefono" class="bg-emerald-50 rounded-lg p-4">
+                <p class="text-xs text-emerald-700 font-semibold mb-1">TELÉFONO</p>
+                <p class="text-lg font-bold text-emerald-900">{{ getCustomerData(selectedOrder)?.telefono }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.email" class="bg-teal-50 rounded-lg p-4">
+                <p class="text-xs text-teal-700 font-semibold mb-1">EMAIL</p>
+                <p class="text-sm font-bold text-teal-900">{{ getCustomerData(selectedOrder)?.email }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.direccion" class="bg-cyan-50 rounded-lg p-4 md:col-span-2 lg:col-span-3">
+                <p class="text-xs text-cyan-700 font-semibold mb-1">DIRECCIÓN COMPLETA</p>
+                <p class="text-sm font-bold text-cyan-900">{{ getCustomerData(selectedOrder)?.direccion }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.colonia" class="bg-sky-50 rounded-lg p-4">
+                <p class="text-xs text-sky-700 font-semibold mb-1">COLONIA</p>
+                <p class="text-sm font-bold text-sky-900">{{ getCustomerData(selectedOrder)?.colonia }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.ciudad" class="bg-blue-50 rounded-lg p-4">
+                <p class="text-xs text-blue-700 font-semibold mb-1">CIUDAD</p>
+                <p class="text-sm font-bold text-blue-900">{{ getCustomerData(selectedOrder)?.ciudad }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.estado" class="bg-indigo-50 rounded-lg p-4">
+                <p class="text-xs text-indigo-700 font-semibold mb-1">ESTADO</p>
+                <p class="text-sm font-bold text-indigo-900">{{ getCustomerData(selectedOrder)?.estado }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.codigo_postal" class="bg-violet-50 rounded-lg p-4">
+                <p class="text-xs text-violet-700 font-semibold mb-1">C.P.</p>
+                <p class="text-sm font-bold text-violet-900">{{ getCustomerData(selectedOrder)?.codigo_postal }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.rfc" class="bg-lime-50 rounded-lg p-4">
+                <p class="text-xs text-lime-700 font-semibold mb-1">RFC</p>
+                <p class="text-sm font-bold text-lime-900">{{ getCustomerData(selectedOrder)?.rfc }}</p>
+              </div>
+              <div *ngIf="getCustomerData(selectedOrder)?.razon_social" class="bg-green-50 rounded-lg p-4 md:col-span-2">
+                <p class="text-xs text-green-700 font-semibold mb-1">RAZÓN SOCIAL</p>
+                <p class="text-sm font-bold text-green-900">{{ getCustomerData(selectedOrder)?.razon_social }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Información del Vehículo -->
+          <div *ngIf="selectedOrder.vehiculo || getVehicleData(selectedOrder)" class="bg-white border-2 border-orange-200 rounded-xl p-6">
+            <h3 class="text-lg font-bold text-orange-900 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+              </svg>
+              Información del Vehículo
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div class="bg-orange-50 rounded-lg p-4">
+                <p class="text-xs text-orange-700 font-semibold mb-1">PLACAS</p>
+                <p class="text-lg font-bold text-orange-900">{{ selectedOrder.vehiculo?.placas || getVehicleData(selectedOrder)?.placas || 'N/A' }}</p>
+              </div>
+              <div class="bg-red-50 rounded-lg p-4">
+                <p class="text-xs text-red-700 font-semibold mb-1">MARCA</p>
+                <p class="text-lg font-bold text-red-900">{{ selectedOrder.vehiculo?.marca || getVehicleData(selectedOrder)?.marca || 'N/A' }}</p>
+              </div>
+              <div class="bg-pink-50 rounded-lg p-4">
+                <p class="text-xs text-pink-700 font-semibold mb-1">MODELO</p>
+                <p class="text-lg font-bold text-pink-900">{{ selectedOrder.vehiculo?.modelo || getVehicleData(selectedOrder)?.modelo || 'N/A' }}</p>
+              </div>
+              <div class="bg-purple-50 rounded-lg p-4">
+                <p class="text-xs text-purple-700 font-semibold mb-1">AÑO</p>
+                <p class="text-lg font-bold text-purple-900">{{ selectedOrder.vehiculo?.anio || getVehicleData(selectedOrder)?.anio || 'N/A' }}</p>
+              </div>
+              <div class="bg-fuchsia-50 rounded-lg p-4">
+                <p class="text-xs text-fuchsia-700 font-semibold mb-1">COLOR</p>
+                <p class="text-lg font-bold text-fuchsia-900">{{ selectedOrder.vehiculo?.color || getVehicleData(selectedOrder)?.color || 'N/A' }}</p>
+              </div>
+              <div *ngIf="getVehicleData(selectedOrder)?.numero_serie || selectedOrder.vehiculo?.numero_serie" class="bg-indigo-50 rounded-lg p-4">
+                <p class="text-xs text-indigo-700 font-semibold mb-1">N° SERIE</p>
+                <p class="text-sm font-bold text-indigo-900">{{ getVehicleData(selectedOrder)?.numero_serie || selectedOrder.vehiculo?.numero_serie || 'N/A' }}</p>
+              </div>
+              <div *ngIf="getVehicleData(selectedOrder)?.kilometraje_inicial" class="bg-amber-50 rounded-lg p-4">
+                <p class="text-xs text-amber-700 font-semibold mb-1">KILOMETRAJE</p>
+                <p class="text-lg font-bold text-amber-900">{{ getVehicleData(selectedOrder)?.kilometraje_inicial | number }} km</p>
+              </div>
+              <div *ngIf="getVehicleData(selectedOrder)?.vin" class="bg-yellow-50 rounded-lg p-4 md:col-span-2">
+                <p class="text-xs text-yellow-700 font-semibold mb-1">VIN</p>
+                <p class="text-sm font-bold text-yellow-900">{{ getVehicleData(selectedOrder)?.vin }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Billing Tab -->
+      <div *ngIf="detailActiveTab === 'billing'">
+        <div class="space-y-6">
+          <!-- Cabecera con estados -->
+          <div class="bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl p-6 text-white">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-3">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              Cobro y Entrega
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                <p class="text-sm font-medium text-emerald-100 mb-1">Estado de Pago</p>
+                <p class="text-xl font-bold" [ngClass]="{
+                  'text-yellow-200': selectedOrder.payment_status === 'pending',
+                  'text-green-200': selectedOrder.payment_status === 'paid'
+                }">
+                  {{ selectedOrder.payment_status === 'paid' ? 'Pagado' : 'Pendiente' }}
+                </p>
+              </div>
+              <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                <p class="text-sm font-medium text-emerald-100 mb-1">Monto Pagado</p>
+                <p class="text-xl font-bold text-white">${{ (selectedOrder.amount_paid || 0).toFixed(2) }}</p>
+              </div>
+              <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                <p class="text-sm font-medium text-emerald-100 mb-1">Estado de Entrega</p>
+                <p class="text-xl font-bold" [ngClass]="{
+                  'text-yellow-200': selectedOrder.delivery_status === 'pending',
+                  'text-green-200': selectedOrder.delivery_status === 'delivered'
+                }">
+                  {{ selectedOrder.delivery_status === 'delivered' ? 'Entregado' : 'Pendiente' }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Manos de Obra Autorizadas -->
+          <div *ngIf="getAuthorizedServicesForBilling(selectedOrder).length > 0" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              Manos de Obra Autorizadas
+            </h4>
+            <div class="bg-blue-50 rounded-lg overflow-hidden">
+              <table class="w-full text-sm">
+                <thead class="bg-blue-200">
+                  <tr>
+                    <th class="text-left p-3 font-bold text-blue-900">Servicio</th>
+                    <th class="text-left p-3 font-bold text-blue-900">Categoría</th>
+                    <th class="text-left p-3 font-bold text-blue-900">Descripción</th>
+                    <th class="text-right p-3 font-bold text-blue-900">Costo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let service of getAuthorizedServicesForBilling(selectedOrder)" class="border-b border-blue-100">
+                    <td class="p-3 font-semibold text-gray-900">{{ service.nombre }}</td>
+                    <td class="p-3 text-gray-700">{{ service.categoria }}</td>
+                    <td class="p-3 text-gray-600 text-xs">{{ service.descripcion }}</td>
+                    <td class="p-3 text-right font-bold text-green-700">${{ service.precio.toFixed(2) }}</td>
+                  </tr>
+                  <tr class="bg-blue-100">
+                    <td colspan="3" class="p-3 text-right font-bold text-blue-900">Subtotal Manos de Obra:</td>
+                    <td class="p-3 text-right font-bold text-blue-900">${{ calculateServicesForBilling(selectedOrder).toFixed(2) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Refacciones Procesadas del XML -->
+          <div *ngIf="xmlProducts.length > 0" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+              </svg>
+              Refacciones Procesadas
+            </h4>
+            <div class="bg-purple-50 rounded-lg overflow-hidden">
+              <table class="w-full text-xs">
+                <thead class="bg-purple-200">
+                  <tr>
+                    <th class="text-left p-2 font-bold text-purple-900">Descripción</th>
+                    <th class="text-center p-2 font-bold text-purple-900">SKU XML</th>
+                    <th class="text-center p-2 font-bold text-purple-900">SKU Oracle</th>
+                    <th class="text-right p-2 font-bold text-purple-900">Costo</th>
+                    <th class="text-center p-2 font-bold text-purple-900">División</th>
+                    <th class="text-center p-2 font-bold text-purple-900">Línea</th>
+                    <th class="text-center p-2 font-bold text-purple-900">Clase</th>
+                    <th class="text-center p-2 font-bold text-purple-900">Cant.</th>
+                    <th class="text-right p-2 font-bold text-purple-900">Costo Total</th>
+                    <th class="text-center p-2 font-bold text-purple-900">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let product of xmlProducts" class="border-b border-purple-100 hover:bg-purple-100">
+                    <td class="p-2 font-medium text-gray-900">{{ product.descripcion }}</td>
+                    <td class="text-center p-2 font-mono text-xs text-gray-700">{{ product.sku_xml || 'N/A' }}</td>
+                    <td class="text-center p-2 font-mono text-xs bg-yellow-100 font-semibold text-gray-900">{{ product.sku_oracle || 'N/A' }}</td>
+                    <td class="text-right p-2 text-gray-900">${{ product.precio.toFixed(2) }}</td>
+                    <td class="text-center p-2 font-mono text-xs text-gray-700">{{ product.division || '-' }}</td>
+                    <td class="text-center p-2 font-mono text-xs text-gray-700">{{ product.linea || '-' }}</td>
+                    <td class="text-center p-2 font-mono text-xs text-gray-700">{{ product.clase || '-' }}</td>
+                    <td class="text-center p-2 font-semibold text-gray-900">{{ product.cantidad }}</td>
+                    <td class="text-right p-2 font-bold text-green-700">${{ (product.precio * product.cantidad).toFixed(2) }}</td>
+                    <td class="text-center p-2">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        ✓ Procesado
+                      </span>
+                    </td>
+                  </tr>
+                  <tr class="bg-purple-100">
+                    <td colspan="8" class="p-2 text-right font-bold text-purple-900">Subtotal Refacciones:</td>
+                    <td class="p-2 text-right font-bold text-purple-900">${{ calculateXmlProductsTotal().toFixed(2) }}</td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Checkbox Empleado y Cálculo Final -->
+          <div class="bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-emerald-300 rounded-xl p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Checkbox y Número de Empleado -->
+              <div>
+                <label class="flex items-center gap-3 cursor-pointer mb-4">
+                  <input
+                    type="checkbox"
+                    [(ngModel)]="selectedOrder.is_employee"
+                    (change)="onEmployeeCheckboxChange()"
+                    [disabled]="selectedOrder.payment_status === 'paid'"
+                    class="w-5 h-5 rounded border-emerald-400 text-emerald-600 focus:ring-emerald-500 disabled:opacity-50"
+                  />
+                  <span class="text-lg font-bold text-emerald-900">Es Empleado (10% descuento)</span>
+                </label>
+
+                <div *ngIf="selectedOrder.is_employee" class="mt-3">
+                  <label class="block text-sm font-semibold text-emerald-900 mb-2">
+                    Número de Empleado
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="selectedOrder.employee_number"
+                    (blur)="saveEmployeeInfo()"
+                    [disabled]="selectedOrder.payment_status === 'paid'"
+                    placeholder="Ingrese número de empleado"
+                    class="w-full px-4 py-2 border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50 disabled:bg-gray-100"
+                  />
+                </div>
+              </div>
+
+              <!-- Resumen de Totales -->
+              <div class="bg-white rounded-lg p-4 border-2 border-emerald-300">
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center pb-2 border-b border-emerald-200">
+                    <span class="text-sm font-semibold text-gray-700">Subtotal Manos de Obra:</span>
+                    <span class="text-lg font-bold text-gray-900">${{ calculateServicesForBilling(selectedOrder).toFixed(2) }}</span>
+                  </div>
+                  <div class="flex justify-between items-center pb-2 border-b border-emerald-200">
+                    <span class="text-sm font-semibold text-gray-700">Subtotal Refacciones:</span>
+                    <span class="text-lg font-bold text-gray-900">${{ calculateXmlProductsTotal().toFixed(2) }}</span>
+                  </div>
+                  <div class="flex justify-between items-center pb-2 border-b border-emerald-200">
+                    <span class="text-sm font-semibold text-gray-700">Subtotal:</span>
+                    <span class="text-lg font-bold text-gray-900">${{ calculateGrandTotal().toFixed(2) }}</span>
+                  </div>
+
+                  <div *ngIf="selectedOrder.is_employee" class="flex justify-between items-center pb-2 border-b border-emerald-200 bg-yellow-50 -mx-2 px-2 py-1 rounded">
+                    <span class="text-sm font-semibold text-yellow-700">Descuento Empleado (10%):</span>
+                    <span class="text-lg font-bold text-red-600">-${{ calculateEmployeeDiscount().toFixed(2) }}</span>
+                  </div>
+
+                  <div class="flex justify-between items-center pt-3 border-t-2 border-emerald-400">
+                    <span class="text-xl font-bold text-emerald-900">TOTAL A COBRAR:</span>
+                    <span class="text-3xl font-bold text-emerald-600">${{ calculateFinalTotal().toFixed(2) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h4 class="text-lg font-bold text-gray-800 mb-4">Acciones de Pago y Entrega</h4>
+            <div class="flex flex-wrap gap-4">
+              <!-- Botón Marcar como Pagado -->
+              <button
+                *ngIf="selectedOrder.payment_status !== 'paid'"
+                (click)="showPaymentModal = true"
+                class="flex-1 min-w-[200px] bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-4 rounded-lg font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Registrar Pago
+              </button>
+
+              <!-- Badge de Pagado -->
+              <div *ngIf="selectedOrder.payment_status === 'paid'" class="flex-1 min-w-[200px] bg-green-100 border-2 border-green-400 text-green-800 px-6 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Pagado el {{ selectedOrder.paid_at | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+
+              <!-- Botón Entregado -->
+              <button
+                *ngIf="selectedOrder.payment_status === 'paid' && selectedOrder.delivery_status !== 'delivered'"
+                (click)="markAsDelivered(selectedOrder)"
+                class="flex-1 min-w-[200px] bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-6 py-4 rounded-lg font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                </svg>
+                Marcar como Entregado
+              </button>
+
+              <!-- Badge de Entregado -->
+              <div *ngIf="selectedOrder.delivery_status === 'delivered'" class="flex-1 min-w-[200px] bg-blue-100 border-2 border-blue-400 text-blue-800 px-6 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-3">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Entregado el {{ selectedOrder.delivered_at | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Tab -->
+      <div *ngIf="detailActiveTab === 'products'">
+        <div class="mb-4 flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Refacciones del Presupuesto</h3>
+            <div *ngIf="!isEditingProducts && selectedOrder.productos && selectedOrder.productos.length > 0" class="flex items-center gap-2">
+              <span class="text-sm text-gray-600">Tipo de Pago / Margen:</span>
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm">
+                {{ getPaymentTypeLabel(selectedOrder.productos[0].porcentaje) }}
+              </span>
+            </div>
+          </div>
+          <button
+            *ngIf="!isEditingProducts && !isOrderAuthorized(selectedOrder)"
+            (click)="startEditingProducts()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            Editar Refacciones
+          </button>
+          <div *ngIf="isOrderAuthorized(selectedOrder) && !isEditingProducts" class="bg-yellow-50 border border-yellow-300 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center text-sm text-yellow-800">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                <span>Pedido autorizado - Solo se puede editar el Tipo de Pago/Margen</span>
+              </div>
+              <button
+                (click)="startEditingProductsMarginOnly()"
+                class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Editar Margen
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!isEditingProducts && (!selectedOrder.productos || selectedOrder.productos.length === 0)" class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+          </svg>
+          <p class="text-gray-600">No hay refacciones en este presupuesto</p>
+        </div>
+
+        <div *ngIf="!isEditingProducts && selectedOrder.productos && selectedOrder.productos.length > 0" class="overflow-x-auto">
+          <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+              <tr>
+                <th class="text-left py-3 px-4 font-semibold text-sm">#</th>
+                <th class="text-left py-3 px-4 font-semibold text-sm">Descripción</th>
+                <th class="text-center py-3 px-4 font-semibold text-sm">Cantidad</th>
+                <th class="text-right py-3 px-4 font-semibold text-sm">Costo</th>
+                <th class="text-right py-3 px-4 font-semibold text-sm">Precio Venta</th>
+                <th class="text-right py-3 px-4 font-semibold text-sm">Margen</th>
+                <th class="text-right py-3 px-4 font-semibold text-sm">%</th>
+                <th class="text-right py-3 px-4 font-semibold text-sm">Total</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let producto of selectedOrder.productos; let i = index" class="hover:bg-blue-50 transition-colors">
+                <td class="py-3 px-4 text-sm text-gray-600">{{ i + 1 }}</td>
+                <td class="py-3 px-4 text-sm font-medium text-gray-900">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span *ngIf="producto.isRejected" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800 border border-red-300">
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                      </svg>
+                      ❌ RECHAZADO
+                    </span>
+                    <span *ngIf="!producto.isRejected && producto.isAuthorized && producto.fromDiagnostic" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800 border border-green-300">
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                      </svg>
+                      ✓ AUTORIZADA
+                    </span>
+                    <span *ngIf="!producto.isRejected && !producto.fromDiagnostic" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 6l2.5-2.5L9 7V3h2v4l3.5-3.5L17 6v12H3V6z"/>
+                      </svg>
+                      PRE-AUTORIZADA
+                    </span>
+                    <span *ngIf="!producto.isRejected && !producto.isAuthorized && producto.fromDiagnostic"
+                          [class]="'inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ' + getDiagnosticBadgeClass(producto.diagnosticSeverity)">
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      RECOMENDADO
+                      <span *ngIf="producto.diagnosticSeverity === 'urgent'" class="ml-1">🔴</span>
+                      <span *ngIf="producto.diagnosticSeverity === 'recommended'" class="ml-1">🟡</span>
+                      <span *ngIf="producto.diagnosticSeverity === 'good'" class="ml-1">🟢</span>
+                    </span>
+                    <span>{{ producto.descripcion }}</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-center text-sm text-gray-600">{{ producto.cantidad }}</td>
+                <td class="py-3 px-4 text-right text-sm text-gray-600">${{ producto.costo | number:'1.2-2' }}</td>
+                <td class="py-3 px-4 text-right text-sm font-medium text-green-600">${{ producto.precio | number:'1.2-2' }}</td>
+                <td class="py-3 px-4 text-right text-sm text-gray-600">${{ producto.margen | number:'1.2-2' }}</td>
+                <td class="py-3 px-4 text-right text-sm text-gray-600">{{ producto.porcentaje | number:'1.0-0' }}%</td>
+                <td class="py-3 px-4 text-right text-sm font-bold text-gray-900">${{ (producto.precio * producto.cantidad) | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+            <tfoot class="bg-gray-50">
+              <tr>
+                <td colspan="7" class="py-3 px-4 text-right font-semibold text-gray-900">Total Refacciones:</td>
+                <td class="py-3 px-4 text-right font-bold text-lg text-blue-600">${{ getOrderProductsTotal(selectedOrder) | number:'1.2-2' }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div *ngIf="isEditingProducts" class="space-y-4">
+          <!-- Selector de Tipo de Pago / Margen - INDEPENDIENTE -->
+          <div class="bg-gradient-to-r from-blue-600 to-blue-700 border-2 border-blue-700 rounded-lg p-5 shadow-lg">
+            <div class="flex items-center gap-3 mb-3">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <h4 class="font-bold text-white text-lg">Tipo de Pago / Margen</h4>
+            </div>
+            <div class="bg-white rounded-lg p-3">
+              <select
+                [(ngModel)]="selectedPaymentTypeEdit"
+                (change)="onPaymentTypeChangeEdit()"
+                class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg text-base font-semibold bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              >
+                <option value="">Seleccionar tipo de pago</option>
+                <option value="39">39% - Pago en 1 sola exhibición</option>
+                <option value="50">50% - Pago arriba de 12 meses</option>
+                <option value="48">48% - Pago entre 6 y 9 meses</option>
+                <option value="28">28% - Contado</option>
+                <option value="17">17% - Pago Autos Flotilla</option>
+              </select>
+              <p class="mt-2 text-sm text-blue-900 font-medium">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Este margen se aplicará automáticamente a todos las refacciones
+              </p>
+            </div>
+          </div>
+
+          <!-- Agregar Refacción (solo si NO es modo edición de margen únicamente) -->
+          <div *ngIf="!isEditingProductsMarginOnly" class="bg-gray-50 border border-gray-300 rounded-lg p-4">
+            <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Agregar Refacción
+            </h4>
+
+            <div class="grid grid-cols-8 gap-3 mb-3">
+              <div class="col-span-3">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Descripción *</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newProductEdit.descripcion"
+                  placeholder="Descripción de la refacción"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Cantidad *</label>
+                <input
+                  type="number"
+                  [(ngModel)]="newProductEdit.cantidad"
+                  placeholder="Cant"
+                  min="1"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <div class="col-span-2">
+                <label class="block text-xs font-medium text-gray-700 mb-1">Costo (sin IVA) *</label>
+                <input
+                  type="number"
+                  [(ngModel)]="newProductEdit.costo"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                />
+              </div>
+              <div class="col-span-2">
+                <button
+                  (click)="addProductToEdit()"
+                  class="w-full bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium h-full flex items-center justify-center gap-2"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                  </svg>
+                  Agregar Refacción
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+              <tr>
+                <th class="text-left py-3 px-3 text-sm font-semibold">#</th>
+                <th class="text-left py-3 px-3 text-sm font-semibold">Descripción</th>
+                <th class="text-center py-3 px-3 text-sm font-semibold">Cantidad</th>
+                <th class="text-right py-3 px-3 text-sm font-semibold">Costo</th>
+                <th class="text-right py-3 px-3 text-sm font-semibold">Precio Venta</th>
+                <th class="text-right py-3 px-3 text-sm font-semibold">Margen</th>
+                <th class="text-right py-3 px-3 text-sm font-semibold">%</th>
+                <th class="text-right py-3 px-3 text-sm font-semibold">Total</th>
+                <th class="text-center py-3 px-3 text-sm font-semibold">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let producto of editingProducts; let i = index" class="hover:bg-blue-50 transition-colors">
+                <td class="py-3 px-3 text-sm text-gray-600">{{ i + 1 }}</td>
+                <td class="py-3 px-3">
+                  <input
+                    *ngIf="!isEditingProductsMarginOnly"
+                    type="text"
+                    [(ngModel)]="producto.descripcion"
+                    class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Descripción"
+                  />
+                  <span *ngIf="isEditingProductsMarginOnly" class="text-sm text-gray-900">{{ producto.descripcion }}</span>
+                </td>
+                <td class="py-3 px-3 text-center">
+                  <input
+                    *ngIf="!isEditingProductsMarginOnly"
+                    type="number"
+                    [(ngModel)]="producto.cantidad"
+                    class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm text-center focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    min="1"
+                  />
+                  <span *ngIf="isEditingProductsMarginOnly" class="text-sm text-gray-900">{{ producto.cantidad }}</span>
+                </td>
+                <td class="py-3 px-3">
+                  <input
+                    *ngIf="!isEditingProductsMarginOnly"
+                    type="number"
+                    [(ngModel)]="producto.costo"
+                    (input)="recalculateProduct(producto)"
+                    step="0.01"
+                    class="w-full px-2 py-1.5 border border-gray-300 rounded text-sm text-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="0.00"
+                    min="0"
+                  />
+                  <span *ngIf="isEditingProductsMarginOnly" class="text-sm text-gray-900 text-right block">${{ producto.costo | number:'1.2-2' }}</span>
+                </td>
+                <td class="py-3 px-3 text-right text-sm font-semibold text-green-600 bg-green-50">
+                  ${{ producto.precio | number:'1.2-2' }}
+                </td>
+                <td class="py-3 px-3 text-right text-sm font-semibold text-blue-600 bg-blue-50">
+                  ${{ producto.margen | number:'1.2-2' }}
+                </td>
+                <td class="py-3 px-3 text-right text-sm font-semibold text-orange-600 bg-orange-50">
+                  {{ producto.porcentaje | number:'1.0-0' }}%
+                </td>
+                <td class="py-3 px-3 text-right text-sm font-bold text-gray-900">
+                  ${{ (producto.precio * producto.cantidad) | number:'1.2-2' }}
+                </td>
+                <td class="py-3 px-3 text-center">
+                  <button
+                    *ngIf="!isEditingProductsMarginOnly"
+                    (click)="removeProductFromEdit(i)"
+                    class="text-red-600 hover:text-red-800 text-sm font-medium px-3 py-1 rounded hover:bg-red-50 transition-colors"
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot class="bg-gray-50">
+              <tr>
+                <td colspan="7" class="py-3 px-3 text-right font-semibold text-gray-900">Total Refacciones:</td>
+                <td class="py-3 px-3 text-right font-bold text-lg text-blue-600">
+                  ${{ getTotalEditingProducts() | number:'1.2-2' }}
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div class="flex justify-end gap-3">
+            <button (click)="cancelEditingProducts()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium">Cancelar</button>
+            <button (click)="saveEditedProducts()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services Tab -->
+      <div *ngIf="detailActiveTab === 'services'">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-xl font-bold text-gray-900">Mano de Obra Seleccionada</h3>
+          <div>
+            <button
+              *ngIf="!isEditingServices && !isOrderAuthorized(selectedOrder)"
+              (click)="startEditingServices()"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+              Editar Mano de Obra
+            </button>
+            <div *ngIf="isOrderAuthorized(selectedOrder) && !isEditingServices" class="bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-sm text-yellow-800">
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+              Pedido autorizado - No se puede editar la mano de obra
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!isEditingServices && getTotalServicesCount(selectedOrder) === 0" class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+          <p class="text-gray-600">No hay servicios seleccionados</p>
+        </div>
+
+        <div *ngIf="!isEditingServices && getTotalServicesCount(selectedOrder) > 0">
+          <div *ngIf="selectedOrder.servicios && selectedOrder.servicios.length > 0" class="mb-6">
+            <h4 class="font-semibold text-gray-900 mb-3">Servicios Regulares</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full border border-gray-200 rounded-lg">
+                <thead class="bg-gradient-to-r from-green-600 to-green-700 text-white">
+                  <tr>
+                    <th class="text-left py-3 px-4 text-sm font-semibold">#</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold">Mano de Obra</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold">Categoría</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold">Descripción</th>
+                    <th class="text-right py-3 px-4 text-sm font-semibold">Precio</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr *ngFor="let service of selectedOrder.servicios; let i = index" class="hover:bg-green-50 transition-colors">
+                    <td class="py-3 px-4 text-sm text-gray-600">{{ i + 1 }}</td>
+                    <td class="py-3 px-4 text-sm font-medium text-gray-900">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span *ngIf="service.isRejected" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800 border border-red-300">
+                          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                          </svg>
+                          ❌ RECHAZADO
+                        </span>
+                        <span *ngIf="!service.isRejected && service.isAuthorized && service.fromDiagnostic" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800 border border-green-300">
+                          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                          </svg>
+                          ✓ AUTORIZADA
+                        </span>
+                        <span *ngIf="!service.isRejected && !service.fromDiagnostic" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
+                          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 6l2.5-2.5L9 7V3h2v4l3.5-3.5L17 6v12H3V6z"/>
+                          </svg>
+                          PRE-AUTORIZADA
+                        </span>
+                        <span *ngIf="!service.isRejected && !service.isAuthorized && service.fromDiagnostic"
+                              [class]="'inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ' + getDiagnosticBadgeClass(service.diagnosticSeverity)">
+                          <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                          </svg>
+                          RECOMENDACIONES
+                          <span *ngIf="service.diagnosticSeverity === 'urgent'" class="ml-1">🔴</span>
+                          <span *ngIf="service.diagnosticSeverity === 'recommended'" class="ml-1">🟡</span>
+                          <span *ngIf="service.diagnosticSeverity === 'good'" class="ml-1">🟢</span>
+                        </span>
+                        <span>{{ service.nombre }}</span>
+                      </div>
+                    </td>
+                    <td class="py-3 px-4 text-sm text-gray-600">{{ service.categoria }}</td>
+                    <td class="py-3 px-4 text-sm text-gray-600">{{ service.descripcion }}</td>
+                    <td class="py-3 px-4 text-right text-sm font-semibold text-green-600">${{ service.precio | number:'1.2-2' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div *ngIf="getAuthorizedServices(selectedOrder).length > 0" class="mb-6">
+            <h4 class="font-semibold text-gray-900 mb-3">Mano de Obra Autorizada</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full border border-gray-200 rounded-lg">
+                <thead class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+                  <tr>
+                    <th class="text-left py-3 px-4 text-sm font-semibold">#</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold">Mano de Obra</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold">Categoría</th>
+                    <th class="text-left py-3 px-4 text-sm font-semibold">Descripción</th>
+                    <th class="text-center py-3 px-4 text-sm font-semibold">Estado</th>
+                    <th class="text-right py-3 px-4 text-sm font-semibold">Costo</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr *ngFor="let auth of getAuthorizedServices(selectedOrder); let i = index"
+                      class="hover:bg-blue-50 transition-colors"
+                      [class.bg-green-50]="auth.is_authorized"
+                      [class.bg-red-50]="auth.is_authorized === false">
+                    <td class="py-3 px-4 text-sm text-gray-600">{{ i + 1 }}</td>
+                    <td class="py-3 px-4 text-sm font-medium text-gray-900">{{ auth.item_name }}</td>
+                    <td class="py-3 px-4 text-sm text-gray-600">{{ auth.category }}</td>
+                    <td class="py-3 px-4 text-sm text-gray-600">{{ auth.description }}</td>
+                    <td class="py-3 px-4 text-center">
+                      <span *ngIf="auth.is_authorized" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Autorizado
+                      </span>
+                      <span *ngIf="auth.is_authorized === false" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Rechazado
+                      </span>
+                      <span *ngIf="auth.is_authorized === null" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Pendiente
+                      </span>
+                    </td>
+                    <td class="py-3 px-4 text-right text-sm font-semibold text-blue-600">${{ auth.estimated_cost | number:'1.2-2' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-gray-900">Total Mano de Obra:</span>
+              <span class="text-xl font-bold text-green-600">${{ getTotalServicesAmount(selectedOrder) | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isEditingServices" class="space-y-4">
+          <div class="bg-gray-50 p-4 rounded-lg mb-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Agregar Nueva Mano de Obra</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+                <select
+                  [(ngModel)]="newServiceEdit.categoria"
+                  (change)="onServiceCategoryChangeEdit()"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 text-sm"
+                >
+                  <option value="">Seleccionar categoría</option>
+                  <option *ngFor="let cat of serviceCategories" [value]="cat">{{ cat }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Mano de Obra</label>
+                <select
+                  [(ngModel)]="selectedServiceSKUEdit"
+                  (change)="onServiceSelectedEdit()"
+                  [disabled]="!newServiceEdit.categoria"
+                  class="w-full border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 text-sm disabled:bg-gray-100"
+                >
+                  <option value="">Seleccionar servicio</option>
+                  <option *ngFor="let service of availableServicesEdit" [value]="service.sku">
+                    {{ service.nombre }} - ${{ service.precioConIva }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <button
+              type="button"
+              (click)="addServiceToEdit()"
+              [disabled]="!selectedServiceSKUEdit"
+              class="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Agregar Mano de Obra
+            </button>
+          </div>
+
+          <table class="w-full border border-gray-200 rounded-lg">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="text-left py-2 px-3 text-sm font-semibold">#</th>
+                <th class="text-left py-2 px-3 text-sm font-semibold">Mano de Obra</th>
+                <th class="text-left py-2 px-3 text-sm font-semibold">Categoría</th>
+                <th class="text-left py-2 px-3 text-sm font-semibold">Descripción</th>
+                <th class="text-right py-2 px-3 text-sm font-semibold">Precio</th>
+                <th class="text-center py-2 px-3 text-sm font-semibold">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let service of editingServices; let i = index" class="border-t">
+                <td class="py-2 px-3 text-sm">{{ i + 1 }}</td>
+                <td class="py-2 px-3 text-sm">{{ service.nombre }}</td>
+                <td class="py-2 px-3 text-sm">{{ service.categoria }}</td>
+                <td class="py-2 px-3 text-sm">{{ service.descripcion }}</td>
+                <td class="py-2 px-3 text-right text-sm">${{ service.precio | number:'1.2-2' }}</td>
+                <td class="py-2 px-3 text-center">
+                  <button (click)="removeServiceFromEdit(i)" class="text-red-600 hover:text-red-800 text-sm font-medium">Eliminar</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="flex justify-end gap-3">
+            <button (click)="cancelEditingServices()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-md text-sm font-medium">Cancelar</button>
+            <button (click)="saveEditedServices()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Tab -->
+      <div *ngIf="detailActiveTab === 'summary'">
+        <div class="mb-4">
+          <h3 class="text-xl font-bold text-green-700 flex items-center gap-2">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Resumen de Servicios Autorizados
+          </h3>
+          <p class="text-sm text-gray-600 mt-1">Todos los servicios y refacciones que se han autorizado para este pedido</p>
+        </div>
+
+        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-green-50">
+              <tr>
+                <th class="py-3 px-4 text-left text-xs font-semibold text-green-900 uppercase tracking-wider">#</th>
+                <th class="py-3 px-4 text-left text-xs font-semibold text-green-900 uppercase tracking-wider">Tipo</th>
+                <th class="py-3 px-4 text-left text-xs font-semibold text-green-900 uppercase tracking-wider">Descripción</th>
+                <th class="py-3 px-4 text-center text-xs font-semibold text-green-900 uppercase tracking-wider">Cantidad</th>
+                <th class="py-3 px-4 text-right text-xs font-semibold text-green-900 uppercase tracking-wider">Precio Unit.</th>
+                <th class="py-3 px-4 text-right text-xs font-semibold text-green-900 uppercase tracking-wider">Importe Total</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <!-- Refacciones Pre-Autorizadas -->
+              <tr *ngFor="let producto of getAuthorizedProducts(selectedOrder); let i = index" class="hover:bg-green-50 transition-colors">
+                <td class="py-3 px-4 text-sm text-gray-600">{{ i + 1 }}</td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-300">
+                    REFACCIÓN
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-sm font-medium text-gray-900">{{ producto.descripcion }}</td>
+                <td class="py-3 px-4 text-center text-sm text-gray-600">{{ producto.cantidad }}</td>
+                <td class="py-3 px-4 text-right text-sm text-gray-600">${{ producto.precio | number:'1.2-2' }}</td>
+                <td class="py-3 px-4 text-right text-sm font-medium text-green-600">${{ (producto.precio * producto.cantidad) | number:'1.2-2' }}</td>
+              </tr>
+
+              <!-- Servicios Pre-Autorizados -->
+              <tr *ngFor="let servicio of selectedOrder.servicios; let i = index" class="hover:bg-green-50 transition-colors">
+                <td class="py-3 px-4 text-sm text-gray-600">{{ getAuthorizedProducts(selectedOrder).length + i + 1 }}</td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-100 text-purple-800 border border-purple-300">
+                    MANO DE OBRA
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-sm font-medium text-gray-900">{{ servicio.nombre }}</td>
+                <td class="py-3 px-4 text-center text-sm text-gray-600">1</td>
+                <td class="py-3 px-4 text-right text-sm text-gray-600">${{ servicio.precio | number:'1.2-2' }}</td>
+                <td class="py-3 px-4 text-right text-sm font-medium text-green-600">${{ servicio.precio | number:'1.2-2' }}</td>
+              </tr>
+
+              <!-- Mano de Obra del Diagnóstico Autorizados -->
+              <tr *ngFor="let auth of getAuthorizedDiagnosticItems(selectedOrder); let i = index" class="hover:bg-green-50 transition-colors">
+                <td class="py-3 px-4 text-sm text-gray-600">{{ getAuthorizedProducts(selectedOrder).length + (selectedOrder.servicios?.length || 0) + i + 1 }}</td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-purple-100 text-purple-800 border border-purple-300">
+                    MANO DE OBRA
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-sm font-medium text-gray-900">{{ auth.item_name }}</td>
+                <td class="py-3 px-4 text-center text-sm text-gray-600">1</td>
+                <td class="py-3 px-4 text-right text-sm text-gray-600">${{ (auth.estimated_cost || 0) | number:'1.2-2' }}</td>
+                <td class="py-3 px-4 text-right text-sm font-medium text-green-600">${{ (auth.estimated_cost || 0) | number:'1.2-2' }}</td>
+              </tr>
+
+              <!-- Si no hay nada autorizado -->
+              <tr *ngIf="getAuthorizedProducts(selectedOrder).length === 0 &&
+                         (!selectedOrder.servicios || selectedOrder.servicios.length === 0) &&
+                         getAuthorizedDiagnosticItems(selectedOrder).length === 0">
+                <td colspan="6" class="py-12 text-center text-gray-500">
+                  <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  <p class="text-lg font-medium text-gray-600">No hay servicios autorizados</p>
+                  <p class="text-sm text-gray-500 mt-1">Agrega refacciones o autoriza recomendaciones para verlas aquí</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totales -->
+        <div class="mt-6 flex justify-end">
+          <div class="w-80 bg-green-50 border-2 border-green-200 rounded-lg overflow-hidden">
+            <div class="bg-green-600 text-white px-4 py-2 font-semibold text-sm uppercase">
+              Totales
+            </div>
+            <div class="p-4 space-y-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-700">Subtotal Refacciones:</span>
+                <span class="font-semibold text-gray-900">${{ calculateAuthorizedProductsTotal(selectedOrder) | number:'1.2-2' }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-700">Subtotal Mano de Obra:</span>
+                <span class="font-semibold text-gray-900">${{ (calculateServicesTotal(selectedOrder) + calculateAuthorizedDiagnosticTotal(selectedOrder)) | number:'1.2-2' }}</span>
+              </div>
+              <div class="border-t-2 border-green-300 pt-2 mt-2"></div>
+              <div class="flex justify-between text-lg font-bold">
+                <span class="text-green-900">IMPORTE TOTAL:</span>
+                <span class="text-green-700">${{ calculateTotalAuthorized(selectedOrder) | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnostic Tab -->
+      <div *ngIf="detailActiveTab === 'diagnostic'">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-xl font-bold text-gray-900">Recomendaciones del Vehículo</h3>
+          <div>
+            <button
+              *ngIf="selectedOrder.diagnostic && !isEditingDiagnostic && !isOrderAuthorized(selectedOrder)"
+              (click)="startEditingDiagnostic(selectedOrder)"
+              class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+              Editar Recomendaciones
+            </button>
+            <div *ngIf="isOrderAuthorized(selectedOrder) && !isEditingDiagnostic" class="bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-sm text-yellow-800">
+              <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+              Pedido autorizado - No se pueden editar las recomendaciones
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!selectedOrder.diagnostic && !isEditingDiagnostic" class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <p class="text-gray-600">No hay recomendaciones registradas</p>
+        </div>
+
+        <div *ngIf="selectedOrder.diagnostic && !isEditingDiagnostic">
+          <app-diagnostic-display
+            [diagnostic]="selectedOrder.diagnostic"
+            [diagnosticAuthorizations]="selectedOrder.diagnostic_authorizations || []"
+          ></app-diagnostic-display>
+        </div>
+
+        <div *ngIf="isEditingDiagnostic">
+          <app-vehicle-diagnostic
+            [initialDiagnostic]="editingDiagnosticData || undefined"
+            [hideVehicleSelection]="true"
+            [currentUserName]="user?.full_name"
+            [selectedMarginPercentage]="selectedPaymentTypeEdit ? parseInt(selectedPaymentTypeEdit) : 30"
+            (diagnosticCompleted)="saveDiagnosticEdit($event)"
+            (cancelled)="cancelEditingDiagnostic()"
+          ></app-vehicle-diagnostic>
+        </div>
+
+        <div *ngIf="selectedOrder.diagnostic_authorizations && selectedOrder.diagnostic_authorizations.length > 0" class="mt-6">
+          <h4 class="font-semibold text-gray-900 mb-3">Autorizaciones</h4>
+          <div class="space-y-3">
+            <div *ngFor="let auth of selectedOrder.diagnostic_authorizations"
+                 class="border rounded-lg p-4"
+                 [class.bg-green-50]="auth.is_authorized"
+                 [class.border-green-300]="auth.is_authorized"
+                 [class.bg-red-50]="!auth.is_authorized"
+                 [class.border-red-300]="!auth.is_authorized">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold"
+                          [class.bg-green-100]="auth.is_authorized"
+                          [class.text-green-800]="auth.is_authorized"
+                          [class.bg-red-100]="!auth.is_authorized"
+                          [class.text-red-800]="!auth.is_authorized">
+                      {{ auth.is_authorized ? '✓ AUTORIZADO' : '✗ RECHAZADO' }}
+                    </span>
+                    <span class="text-xs font-medium text-gray-600">{{ auth.category }}</span>
+                  </div>
+                  <h5 class="font-semibold text-gray-900 mb-1">{{ auth.item_name }}</h5>
+                  <p class="text-sm text-gray-600 mb-2">{{ auth.description }}</p>
+                  <p *ngIf="auth.notes" class="text-sm italic text-gray-500 bg-white px-3 py-2 rounded border border-gray-200">
+                    "{{ auth.notes }}"
+                  </p>
+                </div>
+                <div class="text-right ml-4">
+                  <div class="text-lg font-bold" [class.text-green-600]="auth.is_authorized" [class.text-red-600]="!auth.is_authorized">
+                    ${{ auth.estimated_cost.toFixed(2) }}
+                  </div>
+                  <div *ngIf="auth.authorization_date" class="text-xs text-gray-500 mt-1">
+                    {{ auth.authorization_date | date:'short' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- XML Products Tab -->
+      <div *ngIf="detailActiveTab === 'xml-products'">
+        <div class="mb-6">
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Productos de Facturas XML</h3>
+          <p class="text-sm text-gray-600">Vista previa de productos importados agrupados por proveedor</p>
+        </div>
+
+        <!-- Facturas Cargadas -->
+        <div *ngIf="uploadedInvoices.length > 0" class="mb-6">
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold text-gray-800">Facturas Cargadas ({{ uploadedInvoices.length }})</h4>
+            <div class="bg-blue-100 border border-blue-300 rounded-lg px-4 py-2">
+              <div class="text-sm font-semibold text-blue-900">Total General de Facturas</div>
+              <div class="grid grid-cols-3 gap-4 mt-1">
+                <div>
+                  <div class="text-xs text-blue-600">Subtotal</div>
+                  <div class="text-lg font-bold text-blue-900">${{ calculateTotalInvoicesSubtotal() | number:'1.2-2' }}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-blue-600">IVA (16%)</div>
+                  <div class="text-lg font-bold text-blue-900">${{ calculateTotalInvoicesIVA() | number:'1.2-2' }}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-blue-600 font-bold">Total</div>
+                  <div class="text-xl font-bold text-blue-900">${{ calculateTotalInvoicesTotal() | number:'1.2-2' }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div *ngFor="let invoice of uploadedInvoices" class="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 rounded-lg p-4">
+              <div class="flex items-start justify-between mb-3">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <h5 class="font-bold text-green-900">Factura: {{ invoice.invoice_folio }}</h5>
+                    <span *ngIf="invoice.isGenericSupplier" class="ml-2 bg-yellow-200 text-yellow-800 px-2 py-0.5 rounded text-xs font-semibold">
+                      GENÉRICO
+                    </span>
+                  </div>
+                  <p class="text-sm text-green-800"><strong>Proveedor:</strong> {{ invoice.proveedor }}</p>
+                  <p class="text-sm text-green-800" *ngIf="invoice.rfc_proveedor"><strong>RFC:</strong> {{ invoice.rfc_proveedor }}</p>
+                  <p class="text-xs text-green-700 mt-1">{{ invoice.validados || 0 }} productos</p>
+                </div>
+                <div class="flex flex-col items-end gap-2">
+                  <button
+                    *ngIf="canPerformAction(selectedOrder!, 'advance')"
+                    (click)="deleteInvoice(invoice)"
+                    class="text-red-600 hover:text-red-800 hover:bg-red-100 p-2 rounded transition-colors"
+                    title="Eliminar factura"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Desglose Fiscal -->
+              <div class="bg-white rounded-lg p-3 mt-2 border border-green-200">
+                <div class="text-xs font-semibold text-gray-600 mb-2 uppercase">Desglose Fiscal</div>
+                <div class="space-y-1 text-sm">
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Subtotal (Base sin IVA):</span>
+                    <span class="font-semibold text-gray-900">${{ (invoice.subtotal || 0) | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">IVA (16%):</span>
+                    <span class="font-semibold text-gray-900">${{ (invoice.iva || 0) | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="flex justify-between border-t border-gray-300 pt-1 mt-1">
+                    <span class="font-bold text-gray-900">Total:</span>
+                    <span class="font-bold text-green-700 text-lg">${{ invoice.total_amount | number:'1.2-2' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agrupación por Proveedor -->
+        <div *ngIf="productosPorProveedor.length > 0" class="space-y-6">
+          <div *ngFor="let grupo of productosPorProveedor" class="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
+            <!-- Header del Proveedor -->
+            <div class="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-200">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h4 class="text-lg font-bold text-blue-900">{{ grupo.proveedor }}</h4>
+                  <p class="text-sm text-blue-700 mt-1">
+                    <span *ngIf="grupo.rfc" class="font-medium">RFC: {{ grupo.rfc }}</span>
+                    <span class="mx-2">•</span>
+                    {{ grupo.productos.length }} productos
+                    <span class="mx-2">•</span>
+                    Total: ${{ grupo.montoTotal.toFixed(2) }}
+                  </p>
+                </div>
+                <div class="flex gap-3">
+                  <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                    ✓ {{ grupo.totalValidados }} Validados
+                  </span>
+                  <span *ngIf="grupo.totalNuevos > 0" class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">
+                    ⚠ {{ grupo.totalNuevos }} Nuevos
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabla de Productos -->
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">SKU XML</th>
+                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">SKU Oracle</th>
+                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Costo</th>
+                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">División</th>
+                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Línea</th>
+                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Clase</th>
+                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Costo Total</th>
+                    <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr *ngFor="let producto of grupo.productos" [class.bg-orange-50]="producto.isNew" [class.bg-green-50]="producto.product_status === 'processed'">
+                    <td class="px-4 py-4">
+                      <div class="text-sm font-medium text-gray-900">{{ producto.descripcion }}</div>
+                      <div class="text-xs text-gray-400 mt-1">
+                        <span *ngIf="producto.claveProdServ">SAT: {{ producto.claveProdServ }}</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                      <span *ngIf="producto.sku_xml" class="font-mono text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ producto.sku_xml }}</span>
+                      <span *ngIf="!producto.sku_xml" class="text-gray-400 text-xs">-</span>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                      <span *ngIf="producto.sku_oracle" class="font-mono text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded font-semibold">{{ producto.sku_oracle }}</span>
+                      <span *ngIf="!producto.sku_oracle" class="text-gray-400 text-xs">-</span>
+                    </td>
+                    <td class="px-4 py-4 text-right text-sm font-semibold text-gray-900">
+                      ${{ producto.precio.toFixed(2) }}
+                    </td>
+                    <td class="px-4 py-4 text-center text-sm text-gray-700">
+                      <span *ngIf="producto.division" class="font-mono bg-gray-100 px-2 py-1 rounded">{{ producto.division }}</span>
+                      <span *ngIf="!producto.division" class="text-gray-400 text-xs">-</span>
+                    </td>
+                    <td class="px-4 py-4 text-center text-sm text-gray-700">
+                      <span *ngIf="producto.linea" class="font-mono bg-gray-100 px-2 py-1 rounded">{{ producto.linea }}</span>
+                      <span *ngIf="!producto.linea" class="text-gray-400 text-xs">-</span>
+                    </td>
+                    <td class="px-4 py-4 text-center text-sm">
+                      <span *ngIf="producto.clase" class="font-medium bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ producto.clase }}</span>
+                      <span *ngIf="!producto.clase" class="text-gray-400 text-xs">Pendiente</span>
+                    </td>
+                    <td class="px-4 py-4 text-center text-sm font-semibold text-gray-900">
+                      {{ producto.cantidad }}
+                    </td>
+                    <td class="px-4 py-4 text-right text-sm font-bold text-gray-900">
+                      ${{ producto.total.toFixed(2) }}
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                      <span *ngIf="producto.product_status === 'processed'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        ✓ Procesado
+                      </span>
+                      <span *ngIf="producto.product_status === 'found' || (producto.isValidated && producto.product_status !== 'processed')" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        ✓ Encontrado
+                      </span>
+                      <span *ngIf="producto.product_status === 'not_found' || (!producto.isValidated && producto.product_status !== 'processed')" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        ✗ No Encontrado
+                      </span>
+                      <span *ngIf="producto.product_status === 'pending'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        ⏳ Pendiente
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Footer del Proveedor -->
+            <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 flex justify-between items-center">
+              <div class="text-sm text-gray-600">
+                {{ grupo.productos.length }} productos en total
+              </div>
+              <div class="text-lg font-bold text-gray-900">
+                Total: ${{ grupo.montoTotal.toFixed(2) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje si no hay productos -->
+        <div *ngIf="productosPorProveedor.length === 0" class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-12 text-center">
+          <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+          </svg>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">No hay refacciones XML</h3>
+          <p class="text-gray-600">Carga facturas XML para ver las refacciones aquí</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="border-t border-gray-200 px-6 py-4 bg-gray-50 flex justify-between items-center">
+      <button
+        (click)="selectedOrder && generateBudgetPDF(selectedOrder)"
+        class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        Generar Presupuesto PDF
+      </button>
+
+      <div class="flex gap-3">
+        <button
+          *ngIf="canRequestAuthorization(selectedOrder)"
+          (click)="selectedOrder && requestAuthorization(selectedOrder)"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+        >
+          Solicitar Autorización
+        </button>
+        <button
+          *ngIf="selectedOrder?.status === 'Autorizado' && selectedOrder && canPerformAction(selectedOrder, 'advance') && !hasXmlProducts(selectedOrder)"
+          (click)="selectedOrder && openXmlUpload(selectedOrder)"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+        >
+          Cargar Facturas XML
+        </button>
+
+        <!-- Mensaje para técnicos que no pueden cargar XML -->
+        <div
+          *ngIf="selectedOrder?.status === 'Autorizado' && selectedOrder && !canPerformAction(selectedOrder, 'advance')"
+          class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded"
+        >
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-sm text-yellow-700 font-medium">
+              ⏳ A la espera de carga de factura XML
+            </p>
+          </div>
+          <p class="text-xs text-yellow-600 mt-1 ml-7">
+            Solo Asesores Técnicos, Gerentes y Administradores pueden cargar archivos XML
+          </p>
+        </div>
+        <button
+          *ngIf="selectedOrder?.status === 'Pendiente de Validación de Productos' && auth.canAdvanceOrderStatus()"
+          (click)="selectedOrder && validateProducts(selectedOrder)"
+          [disabled]="selectedOrder?.isValidatingProducts"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+        >
+          {{ selectedOrder?.isValidatingProducts ? 'Validando...' : 'Validar Productos' }}
+        </button>
+        <div
+          *ngIf="selectedOrder?.status === 'Pendiente de Validación de Productos' && !auth.canAdvanceOrderStatus()"
+          class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800"
+        >
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Solo gerentes, asesores técnicos y administradores pueden validar productos.</span>
+          </div>
+        </div>
+        <!-- Botón Procesar Productos (solo si está aprobado o es admin) -->
+        <button
+          *ngIf="canShowProcessProductsButton(selectedOrder)"
+          (click)="selectedOrder && processProducts(selectedOrder)"
+          [disabled]="selectedOrder?.isProcessingProducts"
+          class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+        >
+          {{ selectedOrder?.isProcessingProducts ? 'Procesando...' : 'Procesar Productos' }}
+        </button>
+
+        <!-- Mensaje: Pendiente de Validación del Administrador (para Técnico y Asesor Técnico) -->
+        <div
+          *ngIf="canShowPendingValidationMessage(selectedOrder)"
+          class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg"
+        >
+          <div class="flex items-center gap-3">
+            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <p class="font-semibold text-amber-900">Pendiente de Validación del Administrador</p>
+              <p class="text-sm text-amber-700 mt-1">
+                Los productos han sido validados correctamente y están esperando la aprobación de un Gerente, Admin Corporativo o Super Admin antes de poder ser procesados.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje: Sin permisos para procesar productos -->
+        <div
+          *ngIf="selectedOrder?.status === 'Productos Validados' && !auth.canAdvanceOrderStatus() && !canShowPendingValidationMessage(selectedOrder)"
+          class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800"
+        >
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <span>Solo gerentes, asesores técnicos y administradores pueden procesar productos.</span>
+          </div>
+        </div>
+
+        <!-- Mensaje para estado "Productos Procesados" -->
+        <div
+          *ngIf="selectedOrder?.status === 'Productos Procesados'"
+          class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded"
+        >
+          <div class="flex items-center">
+            <svg class="w-6 h-6 text-indigo-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+            </svg>
+            <div>
+              <p class="text-sm text-indigo-900 font-semibold">
+                ⏳ En espera de generación de Orden de Compra
+              </p>
+              <p class="text-xs text-indigo-700 mt-1">
+                Los productos han sido procesados exitosamente. Requiere validación Pre-OC por parte del Administrador Corporativo o Super Admin antes de generar la OC.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngIf="selectedOrder?.status === 'Pendiente de Orden de Compra' && !auth.canAdvanceOrderStatus()"
+          class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800"
+        >
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <span class="font-semibold">Este presupuesto requiere autorización del administrador para generar la Orden de Compra</span>
+          </div>
+        </div>
+        <button
+          *ngIf="selectedOrder?.status === 'Completado'"
+          (click)="selectedOrder && markAsDelivered(selectedOrder)"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+        >
+          Marcar como Entregado
+        </button>
+        <button
+          (click)="closeOrderDetail()"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div *ngIf="showAuthorizationModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full">
+      <app-authorization-request
+        [orderFolio]="selectedOrder?.folio || ''"
+        [customerName]="selectedOrder?.cliente || ''"
+        [diagnosticItems]="selectedOrder?.diagnostic?.items || []"
+        [products]="selectedOrder?.productos || []"
+        [services]="selectedOrder?.servicios || []"
+        (authorizationSubmitted)="onAuthorizationSubmitted($event)"
+        (cancelled)="cancelAuthorization()"
+      ></app-authorization-request>
+    </div>
+  </div>
+
+  <div *ngIf="showInvoiceUploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full">
+      <app-invoice-upload
+        [orderFolio]="selectedOrder?.folio || ''"
+        (invoiceUploaded)="onInvoiceUploaded($event)"
+        (cancelled)="cancelInvoiceUpload()"
+      ></app-invoice-upload>
+    </div>
+  </div>
+
+  <div *ngIf="showXmlUploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full">
+      <app-xml-upload
+        [orderFolio]="selectedOrder?.folio || ''"
+        (invoicesUploaded)="onXmlInvoicesUploaded($event)"
+        (cancelled)="cancelXmlUpload()"
+      ></app-xml-upload>
+    </div>
+  </div>
+
+  <div *ngIf="showProductClassificationModal && currentProductToClassify">
+    <app-product-classification
+      [product]="currentProductToClassify"
+      [currentIndex]="currentProductIndex"
+      [totalProducts]="productsToClassify.length"
+      (productClassified)="onProductClassified($event)"
+      (productNotFound)="onProductNotFound($event)"
+      (cancelled)="cancelProductClassification()"
+    ></app-product-classification>
+  </div>
+
+  <div *ngIf="showBudgetPreview && selectedOrder && selectedCustomer" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+    <div class="max-w-7xl w-full">
+      <app-budget-preview
+        [order]="selectedOrder"
+        [customer]="selectedCustomer"
+        (closed)="closeBudgetPreview()"
+        (sent)="onBudgetSent($event)"
+      ></app-budget-preview>
+    </div>
+  </div>
+
+  <!-- Modal de Registro de Pago -->
+  <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative animate-fade-in">
+      <!-- Botón cerrar -->
+      <button
+        (click)="showPaymentModal = false; paymentAmount = calculateFinalTotal()"
+        class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <!-- Contenido del modal -->
+      <div class="text-center mb-6">
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+          <svg class="h-10 w-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">Registrar Pago</h3>
+        <p class="text-sm text-gray-600">Confirme el monto cobrado al cliente</p>
+      </div>
+
+      <!-- Total a cobrar (referencia) -->
+      <div class="bg-emerald-50 border-2 border-emerald-200 rounded-lg p-4 mb-6">
+        <p class="text-sm font-semibold text-emerald-700 mb-1">Total a Cobrar (Referencia)</p>
+        <p class="text-3xl font-bold text-emerald-900">${{ calculateFinalTotal().toFixed(2) }}</p>
+      </div>
+
+      <!-- Input de cantidad pagada -->
+      <div class="mb-6">
+        <label class="block text-sm font-bold text-gray-700 mb-2">
+          Cantidad Cobrada <span class="text-red-500">*</span>
+        </label>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl font-bold text-gray-600">\$</span>
+          <input
+            type="number"
+            [(ngModel)]="paymentAmount"
+            step="0.01"
+            min="0"
+            class="w-full pl-10 pr-4 py-3 text-2xl font-bold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            placeholder="0.00"
+          />
+        </div>
+        <p class="mt-2 text-xs text-gray-500">Ingrese el monto exacto cobrado al cliente</p>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex gap-3">
+        <button
+          (click)="showPaymentModal = false; paymentAmount = calculateFinalTotal()"
+          class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="confirmPayment()"
+          [disabled]="!paymentAmount || paymentAmount <= 0"
+          class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-4 rounded-lg transition-all disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Confirmar Pago
+        </button>
+      </div>
+    </div>
+  </div>
